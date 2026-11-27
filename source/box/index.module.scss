@@ -1,0 +1,102 @@
+// The box's structure. Its looks are values (`--box-*`) the interface's style sheet sets from the box's attributes;
+// they don't pass to boxes inside (registered with `inherits: false` there), so a box with nothing set is plain.
+:where(.box) {
+  position: relative;
+  box-sizing: border-box;
+  display: var(--box-display);
+  flex-direction: var(--box-direction);
+  flex-wrap: var(--box-wrap);
+  justify-content: var(--box-justify);
+  align-items: var(--box-align);
+  gap: var(--box-gap);
+  min-block-size: var(--box-minimum-size);
+  min-inline-size: var(--box-minimum-size);
+  padding: var(--box-padding);
+  border: var(--box-border-thickness) var(--line-style) var(--box-border-color);
+  border-radius: var(--corner-radius);
+  background: var(--box-background);
+  color: var(--box-text-color);
+  font-family: var(--font-family);
+  line-height: var(--line-height);
+  text-align: var(--box-text-align);
+  text-decoration: none;
+  // The box's own values don't pass down (they are registered without inheritance); its sections take these.
+  --section-padding: var(--box-section-padding);
+  --section-minimum-size: calc(var(--box-minimum-size) - 2 * var(--box-border-thickness));
+  -webkit-backdrop-filter: var(--box-backdrop);
+  backdrop-filter: var(--box-backdrop);
+  transition:
+    background-color var(--quick-duration) var(--easing),
+    color var(--quick-duration) var(--easing),
+    border-color var(--quick-duration) var(--easing),
+    opacity var(--quick-duration) var(--easing);
+}
+
+:where(.box[data-variant], .box[data-size], .box[data-interactive]) {
+  font-size: var(--current-font-size);
+}
+
+:where(.box[data-interactive]) {
+  cursor: pointer;
+  font-weight: var(--current-font-weight);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-thickness) solid var(--current-color);
+    outline-offset: var(--focus-offset);
+  }
+}
+
+:where(.box[data-state="loading"], .box[data-state="disabled"]) {
+  cursor: default;
+}
+
+:where(.box[data-state="disabled"]) {
+  opacity: var(--disabled-opacity);
+}
+
+// Sections: the content padded by the size's section padding, prefix and suffix at least square.
+:where(.content) {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  gap: inherit;
+  min-inline-size: 0;
+  padding-inline: var(--section-padding);
+}
+
+:where(.section) {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  min-block-size: var(--section-minimum-size);
+  min-inline-size: var(--section-minimum-size);
+}
+
+:where(.box[data-square]) {
+  aspect-ratio: 1;
+
+  > :where(.content) {
+    justify-content: center;
+    padding-inline: 0;
+  }
+}
+
+// While loading, the content keeps its size (and its name for screen readers) under the spinner.
+:where(.box[data-state="loading"]) > :where(.content, .section) {
+  opacity: 0;
+}
+
+:where(.spinner) {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}

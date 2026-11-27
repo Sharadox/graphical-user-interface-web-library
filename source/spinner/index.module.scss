@@ -1,0 +1,41 @@
+:where(.spinner) {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  inline-size: 1em;
+  block-size: 1em;
+  color: inherit;
+}
+
+:where(.bar) {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc(50% - 0.0625em);
+  inline-size: 0.125em;
+  block-size: 0.3em;
+  border-radius: 0.0625em;
+  background: currentcolor;
+  transform: rotate(calc(var(--spinner-bar) * 45deg));
+  transform-origin: 50% 0.5em;
+  opacity: 0.15;
+  // Each bar starts one eighth of the turn after the one before it: the light runs clockwise and leaves a trail.
+  animation: trail var(--spinner-duration) linear infinite;
+  animation-delay: calc(var(--spinner-bar) * var(--spinner-duration) / 8 - var(--spinner-duration));
+}
+
+@keyframes trail {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.bar) {
+    // Still moving (it means "busy"), but slower.
+    animation-duration: calc(var(--spinner-duration) * 2);
+  }
+}
