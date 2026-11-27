@@ -53,8 +53,9 @@ export function NumberField(properties: NumberFieldProperties) {
     set(within(number === undefined ? (min ?? 0) + Math.max(0, direction) * step : number + direction * step));
   const button = (direction: 1 | -1) => (
     <Button
-      variant="transparent"
-      color={color ?? "middleground"}
+      // On a filled field the buttons are filled too, so their icons take the color's text color.
+      variant={variant === "filled" ? "filled" : "transparent"}
+      color={color ?? (error === undefined ? "middleground" : "error")}
       square
       icon={direction === 1 ? "plus" : "minus"}
       aria-label={direction === 1 ? increaseLabel : decreaseLabel}

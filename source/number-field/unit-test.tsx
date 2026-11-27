@@ -109,6 +109,8 @@ test("without limits the buttons never stop; an error colors it; leaving inside 
   );
   const input = screen.getByRole("spinbutton", { name: "Score" }) as HTMLInputElement;
   expect(input.closest("[data-field]")!.getAttribute("data-color")).toBe("error");
+  expect(screen.getByRole("button", { name: "Less" }).getAttribute("data-variant")).toBe("filled");
+  expect(screen.getByRole("button", { name: "Less" }).getAttribute("data-color")).toBe("error");
   fireEvent.click(screen.getByRole("button", { name: "Less" }));
   expect(input.value).toBe("-1");
   expect((screen.getByRole("button", { name: "Less" }) as HTMLButtonElement).disabled).toBe(false);
