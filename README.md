@@ -105,6 +105,13 @@ everything below it: on the page, in one part of it, or on one piece.
 | `…/select`                  | `Select({ label, options, value?, defaultValue?, onChange?, name?, placeholder? })`                                       | A select drawn by the interface, with a native select's keyboard           |
 | `…/combobox`                | `Combobox({ label, options, … , empty? })`, `matches(label, typed)`                                                       | A text field that filters its options as you type                          |
 | `…/number-field`            | `NumberField({ label, value?, min?, max?, step?, decreaseLabel, increaseLabel })`                                         | A number between a minus and a plus section                                |
+| `…/dialog`                  | `Dialog({ open, onClose, title, closeLabel, children })`                                                                  | A modal in the middle of the screen that leaves the way it came            |
+| `…/tip`                     | `Tip({ text, label })`                                                                                                    | A question mark showing a tip on hover, focus or tap                       |
+| `…/notification`            | `NotificationProvider({ label, dismissLabel, duration? })`, `useNotification()`                                           | Notifications at the top right, in their tone's color, hiding themselves   |
+| `…/skeleton`                | `Skeleton({ label, shape?, lines?, rows?, height? })`                                                                     | Shimmering shapes like what is loading                                     |
+| `…/skeleton-value`          | `SkeletonValue({ label?, width?, circle? })`                                                                              | A shimmering shape for one value                                           |
+| `…/copy-button`             | `CopyButton({ value, label, copiedLabel, onCopied? })`                                                                    | Copies a value and says so for two seconds                                 |
+| `…/code-boxes`              | `CodeBoxes({ label, digitLabel, ofLabel, name?, length?, onComplete? })`                                                  | One field box per digit of a one-time code                                 |
 
 ### Box
 

@@ -1,0 +1,35 @@
+// At the top right, just below the site's bar (`--bar-height`, 64 by default), above the page.
+:where(.region) {
+  position: fixed;
+  z-index: 40;
+  inset-block-start: calc(var(--bar-height, 64px) + var(--scale-8));
+  inset-inline-end: var(--scale-16);
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: var(--scale-8);
+  inline-size: min(360px, calc(100vw - 2 * var(--scale-16)));
+  pointer-events: none;
+}
+
+// A nearly opaque background behind the glass, so the message reads over anything.
+.notification {
+  inline-size: 100%;
+  background: rgb(var(--background-color-rgb) / 85%);
+  pointer-events: auto;
+  animation: enter var(--duration) var(--easing);
+}
+
+:where(.message) {
+  flex: 1;
+  margin: 0;
+  color: var(--foreground-color);
+  font-size: var(--scale-14);
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--scale-8)));
+  }
+}

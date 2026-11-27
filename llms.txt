@@ -31,3 +31,10 @@
 - /select: Select({ label, hideLabel?, hint?, error?, options, value?, defaultValue?, onChange?(value), name? (hidden input), placeholder?, disabled?, state?, ...look }) — button role=combobox + Listbox; arrows/Home/End/Enter/Space/Tab/Escape/letters; "use client"
 - /combobox: Combobox({ …Select's, placeholder?: string, empty? }) — input role=combobox aria-autocomplete=list, filters with matches(label, typed) (case- and accent-insensitive); "use client"
 - /number-field: NumberField({ label, hint?, error?, value?, defaultValue?, onChange?(number | undefined), min?, max?, step? (1), name?, disabled?, decreaseLabel, increaseLabel, state?, ...look }) — minus/plus square buttons as prefix/suffix, clamps on blur; "use client"
+- /dialog: Dialog({ open, onClose, title, closeLabel, children }) — native modal <dialog>, Escape/backdrop/close button, leaves with its opening animation reversed; "use client"
+- /tip: Tip({ text, label }) — question-mark Button, role=tooltip bubble on hover/focus/tap, Escape hides; "use client"
+- /notification: NotificationProvider({ label, dismissLabel, duration? (5000) }), useNotification().notify(message, tone?: "success" | "information" | "warn" | "error") — fixed region top right below --bar-height, max 4, errors are alerts and stay twice as long; "use client"
+- /skeleton: Skeleton({ label, shape?: "lines" | "card" | "list" | "profile" | "cards", lines? (3), rows? (3), height? }) — role=status
+- /skeleton-value: SkeletonValue({ label?, width? ("8ch"), circle? }) — inline shimmering shape
+- /copy-button: CopyButton({ value, label, copiedLabel, onCopied? }) — outlined middleground small Button; "use client"
+- /code-boxes: CodeBoxes({ label, digitLabel, ofLabel, name?, length? (6), onComplete?(code), invalid?, disabled?, describedBy?, autoFocus? }) — one large outlined field Box per digit; paste fills all; Backspace/Delete clear; "use client"

@@ -1,0 +1,96 @@
+:where(.skeleton) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--scale-12);
+  inline-size: 100%;
+}
+
+// Every shape: the foreground's transparent color with a light passing over it.
+:where(.shape) {
+  display: block;
+  border-radius: var(--corner-radius);
+  background:
+    linear-gradient(90deg, transparent 0%, rgb(var(--foreground-color-rgb) / 6%) 50%, transparent 100%) 0 0 / 200% 100%
+      no-repeat,
+    var(--foreground-transparent-color);
+  animation: shimmer 1.6s linear infinite;
+}
+
+:where(.line) {
+  block-size: 0.9em;
+}
+
+:where(.short) {
+  inline-size: 60%;
+}
+
+:where(.block) {
+  inline-size: 100%;
+}
+
+.card {
+  inline-size: 100%;
+}
+
+:where(.profile) {
+  flex-direction: row;
+  align-items: center;
+}
+
+:where(.circle) {
+  flex: none;
+  inline-size: var(--scale-64);
+  block-size: var(--scale-64);
+  border-radius: 10000px;
+}
+
+:where(.stack) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--scale-8);
+}
+
+:where(.grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: var(--scale-16);
+}
+
+:where(.row) {
+  display: flex;
+  align-items: center;
+  gap: var(--scale-12);
+}
+
+:where(.dot) {
+  flex: none;
+  inline-size: var(--scale-32);
+  block-size: var(--scale-32);
+}
+
+:where(.button) {
+  flex: none;
+  inline-size: var(--scale-64);
+  block-size: var(--scale-32);
+}
+
+@keyframes shimmer {
+  from {
+    background-position:
+      100% 0,
+      0 0;
+  }
+
+  to {
+    background-position:
+      -100% 0,
+      0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.shape) {
+    animation: none;
+  }
+}
