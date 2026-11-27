@@ -32,6 +32,6 @@
 }
 
 // A text area's sections sit at its top, beside the first line.
-:where([data-multiline]) {
+:where(.multiline) {
   align-items: stretch;
 }

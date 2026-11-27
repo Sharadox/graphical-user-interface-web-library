@@ -1,4 +1,5 @@
 import type { TextareaHTMLAttributes } from "react";
+import { classNames } from "@sharadox/web-library/class-name";
 import { Box } from "@sharadox/graphical-user-interface-web-library/box";
 import { Field } from "@sharadox/graphical-user-interface-web-library/field";
 import type { TextFieldProperties } from "@sharadox/graphical-user-interface-web-library/text-field/type";
@@ -49,7 +50,7 @@ export function TextField(properties: TextFieldProperties) {
           state={state ?? (disabled ? "disabled" : "enabled")}
           prefix={prefix}
           suffix={suffix}
-          className={className}
+          className={classNames(multiline && styles.multiline, className)}
           {...(multiline && { "data-multiline": "" })}
         >
           {multiline ? (
