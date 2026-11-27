@@ -1,0 +1,70 @@
+:where(.anchor) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.anchor) > .field {
+  cursor: pointer;
+}
+
+:where(.button) {
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  min-block-size: var(--section-minimum-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: inherit;
+}
+
+:where(.field:not([data-variant="filled"])) :where(.button) {
+  color: var(--current-hover-color);
+}
+
+:where(.placeholder) {
+  opacity: 0.6;
+}
+
+// Under the field, above what follows; nearly opaque behind the glass.
+.calendar {
+  position: absolute;
+  z-index: 20;
+  inset-block-start: calc(100% + var(--scale-4));
+  inset-inline-start: 0;
+  inline-size: max-content;
+  background: rgb(var(--background-color-rgb) / 90%);
+}
+
+:where(.month) {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+:where(.grid) {
+  border-collapse: collapse;
+}
+
+:where(.weekday) {
+  padding-block: var(--scale-4);
+  color: var(--middleground-color);
+  font-size: var(--scale-12);
+  font-weight: 500;
+}
+
+:where(.cell) {
+  padding: 1px;
+  text-align: center;
+}
+
+// Today is underlined, so it is found at a glance.
+:where(.day[aria-current="date"]) {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}

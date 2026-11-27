@@ -63,7 +63,7 @@ export function Button(properties: ButtonProperties) {
   const { type = "button", link: _link, ...button } = box as typeof box & { type?: string; link?: undefined };
   void _link;
   return (
-    <Box {...button} as="button" type={type} disabled={currentState === "disabled"}>
+    <Box {...button} as="button" type={type} disabled={disabled}>
       {content}
     </Box>
   );

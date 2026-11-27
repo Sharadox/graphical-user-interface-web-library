@@ -108,3 +108,17 @@ test("an icon button is square and named by its label", () => {
   expect(button.getAttribute("data-square")).toBe("");
   expect(button.querySelector("svg")).not.toBeNull();
 });
+
+test("a forced disabled state looks disabled and refuses clicks, yet stays focusable (a calendar's day past a limit)", () => {
+  const click = vi.fn();
+  render(
+    <Button state="disabled" onClick={click}>
+      4
+    </Button>,
+  );
+  const button = screen.getByRole("button", { name: "4" }) as HTMLButtonElement;
+  expect(button.disabled).toBe(false);
+  expect(button.getAttribute("aria-disabled")).toBe("true");
+  fireEvent.click(button);
+  expect(click).not.toHaveBeenCalled();
+});

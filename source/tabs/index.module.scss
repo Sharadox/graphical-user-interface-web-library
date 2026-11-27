@@ -1,0 +1,13 @@
+:where(.list) {
+  padding-block-end: var(--scale-8);
+  border-block-end: var(--line-thickness) var(--line-style) var(--foreground-border-color);
+}
+
+:where(.panel) {
+  text-align: start;
+
+  &:focus-visible {
+    outline: var(--focus-thickness) solid var(--foreground-color);
+    outline-offset: var(--focus-offset);
+  }
+}
