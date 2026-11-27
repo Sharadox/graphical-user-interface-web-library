@@ -26,3 +26,8 @@
 - /separator: Separator({ orientation? (horizontal | vertical), color? (foreground), line?, className? }) — <hr> in the color's border color
 - /badge: Badge(box properties) — span, filled brand small, inline
 - /avatar: Avatar({ name, src?, size? (medium), color? (brand), corner? (circle), colorStyle?, line?, className? }); initials(name) — img, or initials on a filled box when missing or failing; "use client"
+- /field: the label's id is the control's id + "-label"
+- /listbox: Listbox({ id (options: id-<index>), labelledBy, options: { value, label }[], chosen, active, onActive(index), onChoose(index), empty? }) — absolute panel under its anchor
+- /select: Select({ label, hideLabel?, hint?, error?, options, value?, defaultValue?, onChange?(value), name? (hidden input), placeholder?, disabled?, state?, ...look }) — button role=combobox + Listbox; arrows/Home/End/Enter/Space/Tab/Escape/letters; "use client"
+- /combobox: Combobox({ …Select's, placeholder?: string, empty? }) — input role=combobox aria-autocomplete=list, filters with matches(label, typed) (case- and accent-insensitive); "use client"
+- /number-field: NumberField({ label, hint?, error?, value?, defaultValue?, onChange?(number | undefined), min?, max?, step? (1), name?, disabled?, decreaseLabel, increaseLabel, state?, ...look }) — minus/plus square buttons as prefix/suffix, clamps on blur; "use client"

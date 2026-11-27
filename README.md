@@ -101,6 +101,10 @@ everything below it: on the page, in one part of it, or on one piece.
 | `…/separator`               | `Separator({ orientation?, color?, line? })`                                                                              | A horizontal (or vertical) line in the line style                          |
 | `…/badge`                   | `Badge(box)`                                                                                                              | A short label in running text: small, filled, brand                        |
 | `…/avatar`                  | `Avatar({ name, src?, size?, color?, corner? })`, `initials(name)`                                                        | A picture, or the initials when there is none; round                       |
+| `…/listbox`                 | `Listbox({ id, labelledBy, options, chosen, active, onActive, onChoose, empty? })`                                        | The list a select or combobox opens: a glass panel, the chosen one checked |
+| `…/select`                  | `Select({ label, options, value?, defaultValue?, onChange?, name?, placeholder? })`                                       | A select drawn by the interface, with a native select's keyboard           |
+| `…/combobox`                | `Combobox({ label, options, … , empty? })`, `matches(label, typed)`                                                       | A text field that filters its options as you type                          |
+| `…/number-field`            | `NumberField({ label, value?, min?, max?, step?, decreaseLabel, increaseLabel })`                                         | A number between a minus and a plus section                                |
 
 ### Box
 

@@ -5,6 +5,8 @@
 - Form controls: `Field`, `TextField` (and text areas), `Checkbox`, `RadioGroup` and `Switch`; a box can hold a
   form control (`field`).
 - Layout pieces: `Wrapper` (the page's width), `Card`, `Separator`, `Badge` and `Avatar`.
+- Choosing: `Select` (the interface's own, never the browser's), `Combobox` (filters as you type, ignoring case and
+  accents) and `NumberField` (minus and plus sections), on a shared `Listbox`.
 - Every module style sheet is tested to compile as a pure CSS module, as Next.js needs.
 
 ## 0.1.0
