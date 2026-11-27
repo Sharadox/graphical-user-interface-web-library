@@ -235,6 +235,8 @@ test("direction, alignment, gap and padding are values of the box too", () => {
   expect(rule(sheet, '[data-justify="end"]')).toEqual(["--box-justify:end"]);
   expect(rule(sheet, '[data-align="stretch"]')).toEqual(["--box-align:stretch"]);
   expect(rule(sheet, '[data-text-align="start"]')).toEqual(["--box-text-align:start"]);
+  expect(rule(sheet, '[data-wrap="wrap"]')).toEqual(["--box-wrap:wrap"]);
+  expect(sheet).toContain('@property --box-wrap{syntax:"*";inherits:false;initial-value:nowrap}');
   expect(rule(sheet, '[data-gap="24"]')).toEqual(["--box-gap:var(--scale-24)"]);
   expect(rule(sheet, '[data-padding="128"]')).toEqual(["--box-padding:var(--scale-128)"]);
   expect(inBreakpoint(640, '[data-gap-640="8"]{--box-gap:var(--scale-8)}')).toBe(true);

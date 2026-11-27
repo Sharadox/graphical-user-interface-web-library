@@ -5,6 +5,7 @@
   box-sizing: border-box;
   display: var(--box-display);
   flex-direction: var(--box-direction);
+  flex-wrap: var(--box-wrap);
   justify-content: var(--box-justify);
   align-items: var(--box-align);
   gap: var(--box-gap);
@@ -19,6 +20,9 @@
   line-height: var(--line-height);
   text-align: var(--box-text-align);
   text-decoration: none;
+  // The box's own values don't pass down (they are registered without inheritance); its sections take these.
+  --section-padding: var(--box-section-padding);
+  --section-minimum-size: calc(var(--box-minimum-size) - 2 * var(--box-border-thickness));
   -webkit-backdrop-filter: var(--box-backdrop);
   backdrop-filter: var(--box-backdrop);
   transition:
@@ -65,7 +69,7 @@
   align-items: inherit;
   gap: inherit;
   min-inline-size: 0;
-  padding-inline: var(--box-section-padding);
+  padding-inline: var(--section-padding);
 }
 
 :where(.section) {
@@ -73,8 +77,8 @@
   flex: none;
   justify-content: center;
   align-items: center;
-  min-block-size: calc(var(--box-minimum-size) - 2 * var(--box-border-thickness));
-  min-inline-size: calc(var(--box-minimum-size) - 2 * var(--box-border-thickness));
+  min-block-size: var(--section-minimum-size);
+  min-inline-size: var(--section-minimum-size);
 }
 
 :where(.box[data-square]) {

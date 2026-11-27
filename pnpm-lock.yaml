@@ -11,6 +11,9 @@ importers:
       '@sharadox/icon-web-library':
         specifier: 0.7.0-development.36
         version: 0.7.0-development.36(react@19.3.1)
+      '@sharadox/style-web-library':
+        specifier: ^0.3.1
+        version: 0.3.1(react@19.3.1)
       '@sharadox/web-library':
         specifier: ^0.11.1
         version: 0.11.1
@@ -703,6 +706,12 @@ packages:
   '@sharadox/prettier-configuration-web-library@0.1.2':
     resolution: {integrity: sha512-SFqfnfMqr2KoK5w/KAwYOS4NQGkOYPLzLhY/O/pVNLpzGPC24C/djE/v/0Agh91HGaLQO591DV1QHvwJw07N3w==}
     engines: {node: '>=26'}
+
+  '@sharadox/style-web-library@0.3.1':
+    resolution: {integrity: sha512-0J4HZBE9ybOmv4siVaVlQL7tzesGjVq19v2cJwv8GOpS4v9ASMlcnsEV+Nq2f9VjV9vu2V9lZc6Zv0VvfDOuDA==}
+    engines: {node: '>=26'}
+    peerDependencies:
+      react: '>=19'
 
   '@sharadox/turborepo-configuration-web-library@0.1.4':
     resolution: {integrity: sha512-HvLEItkOWwcKSkm4r9k23RLGJ4O9YedyNZxKdoyHQN8s5VeT3kzST8NgzvJSiAAxUS5DnmaqKDfWzykArdB8HA==}
@@ -2312,6 +2321,11 @@ snapshots:
       typescript: 6.0.3
 
   '@sharadox/prettier-configuration-web-library@0.1.2': {}
+
+  '@sharadox/style-web-library@0.3.1(react@19.3.1)':
+    dependencies:
+      '@sharadox/web-library': 0.11.1
+      react: 19.3.1
 
   '@sharadox/turborepo-configuration-web-library@0.1.4(turbo@2.11.13)':
     dependencies:

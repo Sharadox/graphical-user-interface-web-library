@@ -108,10 +108,3 @@ test("an icon button is square and named by its label", () => {
   expect(button.getAttribute("data-square")).toBe("");
   expect(button.querySelector("svg")).not.toBeNull();
 });
-
-test("its axes list every value the design system shows", async () => {
-  const { BUTTON_AXES } = await import("@sharadox/graphical-user-interface-web-library/button");
-  expect(BUTTON_AXES.variant).toEqual(["filled", "outlined", "transparent", "inline"]);
-  expect(BUTTON_AXES.state).toEqual(["enabled", "hover", "active", "loading", "disabled"]);
-  expect(BUTTON_AXES.size).toEqual(["small", "medium", "large"]);
-});

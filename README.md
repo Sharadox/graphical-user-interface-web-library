@@ -76,16 +76,20 @@ everything below it: on the page, in one part of it, or on one piece.
 
 ## API
 
-| Import                      | Export                                                                                                                    | Description                                                 |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `…/interface-configuration` | `defineInterface(overrides?)`, `DEFAULT_INTERFACE`, `isReference`, `INHERIT_COLOR_STYLE`                                  | A brand's interface: the defaults with its changes, checked |
-| `…/style-sheet`             | `interfaceStyleSheet(configuration)`                                                                                      | The whole interface as CSS                                  |
-| `…/interface-style`         | `InterfaceStyle({ configuration })`                                                                                       | That CSS in a `<style>` element, for the root layout        |
-| `…/responsive`              | `responsiveAttributes(name, value, fallback?)`                                                                            | `data-*` attributes for a value or a value per breakpoint   |
-| `…/box-axis`                | `boxAxes(scale)`, `VARIANT_AXIS`, `DIRECTION_AXIS`, `JUSTIFY_AXIS`, `ALIGN_AXIS`, `TEXT_ALIGN_AXIS`, `BOX_INITIAL_VALUES` | The ways a box varies, and each value's look                |
-| `…/box`                     | `Box(properties)`, `lookAttributes(look)`                                                                                 | The base of every piece                                     |
-| `…/spinner`                 | `Spinner({ className? })`                                                                                                 | Eight bars lit one after another clockwise, leaving a trail |
-| `…/button`                  | `Button(properties)`, `BUTTON_AXES`                                                                                       | A button, or with `href` a link that looks the same         |
+| Import                      | Export                                                                                                                    | Description                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `…/interface-configuration` | `defineInterface(overrides?)`, `DEFAULT_INTERFACE`, `isReference`, `INHERIT_COLOR_STYLE`                                  | A brand's interface: the defaults with its changes, checked                |
+| `…/style-sheet`             | `interfaceStyleSheet(configuration)`                                                                                      | The whole interface as CSS                                                 |
+| `…/interface-style`         | `InterfaceStyle({ configuration })`                                                                                       | That CSS in a `<style>` element, for the root layout                       |
+| `…/responsive`              | `responsiveAttributes(name, value, fallback?)`                                                                            | `data-*` attributes for a value or a value per breakpoint                  |
+| `…/box-axis`                | `boxAxes(scale)`, `VARIANT_AXIS`, `DIRECTION_AXIS`, `JUSTIFY_AXIS`, `ALIGN_AXIS`, `TEXT_ALIGN_AXIS`, `BOX_INITIAL_VALUES` | The ways a box varies, and each value's look                               |
+| `…/box`                     | `Box(properties)`, `lookAttributes(look)`                                                                                 | The base of every piece                                                    |
+| `…/spinner`                 | `Spinner({ className? })`                                                                                                 | Eight bars lit one after another clockwise, leaving a trail                |
+| `…/button`                  | `Button(properties)`                                                                                                      | A button, or with `href` a link that looks the same (a client component)   |
+| `…/button-axis`             | `BUTTON_AXES`                                                                                                             | Every value a button is shown in (readable on the server)                  |
+| `…/choice`                  | `Choice({ label, options, value, onChange, size?, color? })`                                                              | A segmented choice: a radio group, one tab stop, arrow keys                |
+| `…/interface-styles`        | `interfaceStyles(configuration)`                                                                                          | The color, corner and line styles as remembered `style-web-library` groups |
+| `…/style-switch`            | `StyleSwitch({ configuration, group, label, labels? })`                                                                   | A `Choice` that switches a style group for the whole page                  |
 
 ### Box
 

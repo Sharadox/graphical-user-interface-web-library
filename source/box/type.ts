@@ -29,6 +29,8 @@ export interface BoxLook {
   justify?: Responsive<BoxJustify>;
   align?: Responsive<BoxAlign>;
   textAlign?: Responsive<BoxTextAlign>;
+  /** Whether children wrap onto more lines when they don't fit (`nowrap` by default). */
+  wrap?: Responsive<"wrap" | "nowrap">;
   gap?: Responsive<ScaleStep>;
   padding?: Responsive<ScaleStep>;
 }

@@ -17,6 +17,7 @@ const LOOK_ATTRIBUTES: ReadonlyArray<[keyof BoxLook, string]> = [
   ["justify", "data-justify"],
   ["align", "data-align"],
   ["textAlign", "data-text-align"],
+  ["wrap", "data-wrap"],
   ["gap", "data-gap"],
   ["padding", "data-padding"],
 ];

@@ -26,6 +26,7 @@ test("every look is an attribute, per breakpoint where given", () => {
       justify="start"
       align="stretch"
       textAlign="start"
+      wrap="wrap"
       gap={{ base: 8, 960: 24 }}
       padding={16}
       className="custom"
@@ -53,6 +54,7 @@ test("every look is an attribute, per breakpoint where given", () => {
     "data-justify": "start",
     "data-align": "stretch",
     "data-text-align": "start",
+    "data-wrap": "wrap",
     "data-gap": "8",
     "data-gap-960": "24",
     "data-padding": "16",

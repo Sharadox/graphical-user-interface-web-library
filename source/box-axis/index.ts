@@ -7,6 +7,7 @@ export const BOX_INITIAL_VALUES: AxisDeclarations = {
   "box-justify": "center",
   "box-align": "center",
   "box-text-align": "center",
+  "box-wrap": "nowrap",
   "box-gap": "0px",
   "box-padding": "0px",
   "box-minimum-size": "0px",
@@ -102,6 +103,9 @@ export const TEXT_ALIGN_AXIS = simple(
   same("start", "center", "end", "left", "right"),
 );
 
+/** Whether children wrap onto more lines when they don't fit. */
+export const WRAP_AXIS = simple("data-wrap", "box-wrap", same("wrap", "nowrap"));
+
 /** Spaces from the scale: `data-gap="8"` is `var(--scale-8)`. */
 const spaced = (attribute: string, property: string, scale: readonly number[]) =>
   simple(attribute, property, Object.fromEntries(scale.map((step) => [String(step), `var(--scale-${step})`])));
@@ -120,6 +124,7 @@ export function boxAxes(scale: readonly number[]): Axis[] {
     JUSTIFY_AXIS,
     ALIGN_AXIS,
     TEXT_ALIGN_AXIS,
+    WRAP_AXIS,
     spaced("data-gap", "box-gap", scale),
     spaced("data-padding", "box-padding", scale),
   ];

@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import type { MouseEvent } from "react";
 import { Icon } from "@sharadox/icon-web-library/icon";
@@ -5,19 +6,12 @@ import { Box } from "@sharadox/graphical-user-interface-web-library/box";
 import type { BoxState } from "@sharadox/graphical-user-interface-web-library/box/type";
 import type { ButtonProperties } from "@sharadox/graphical-user-interface-web-library/button/type";
 
-/** Every value the design system shows a button in. */
-export const BUTTON_AXES = {
-  variant: ["filled", "outlined", "transparent", "inline"],
-  state: ["enabled", "hover", "active", "loading", "disabled"],
-  size: ["small", "medium", "large"],
-} as const;
-
 /**
  * The button: a `<button>`, or with `href` a link (next/link's `Link`, or the site's own `link`) that looks the same,
  * so the two can never drift apart. Filled in the brand color by default; any variant, color, color style, corner,
  * line and size (each per breakpoint too), a prefix and a suffix section, or one square icon. While `loading` it
  * shows the spinner, is marked busy and ignores clicks, so an action never runs twice; disabled, a link loses its
- * address.
+ * address. It is a client component (it handles clicks), so a server page can use it with serializable properties.
  *
  * @example
  * <Button type="submit" loading={saving}>Save</Button>

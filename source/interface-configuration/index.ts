@@ -72,7 +72,7 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     "interactive-font-weight": "500",
     "field-font-weight": "400",
     "line-height": "1.25",
-    "font-family": "inherit",
+    "font-family": "system-ui, sans-serif",
     "wrapper-width": "1280px",
     "wrapper-padding": "var(--scale-16)",
     "spinner-duration": "0.8s",

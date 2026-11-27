@@ -7,6 +7,10 @@
 - /interface-style: InterfaceStyle({ configuration }) — <style> with the sheet, in the root layout's head
 - /responsive: responsiveAttributes(name, value | { base?, [width]: value }, fallback?) → { [data-name(-width)]: string }
 - /box-axis: boxAxes(scale) → Axis[] ({ attribute, values: { [name]: { rest, hover?, active? } } }); VARIANT_AXIS, DIRECTION_AXIS, JUSTIFY_AXIS, ALIGN_AXIS, TEXT_ALIGN_AXIS, BOX_INITIAL_VALUES
-- /box: Box({ as?, variant?: filled|outlined|transparent|inline, color?, colorStyle?, corner?, line?, size?, direction?: left-to-right|right-to-left|top-to-bottom|bottom-to-top, justify?, align?, textAlign?, gap?, padding? (each Responsive), prefix?, suffix?, square?, interactive?, state?: enabled|hover|active|loading|disabled, ...element }); flex, centered both axes and text by default
+- /box: Box({ as?, variant?: filled|outlined|transparent|inline, color?, colorStyle?, corner?, line?, size?, direction?: left-to-right|right-to-left|top-to-bottom|bottom-to-top, justify?, align?, textAlign?, wrap?, gap?, padding? (each Responsive), prefix?, suffix?, square?, interactive?, state?: enabled|hover|active|loading|disabled, ...element }); flex, centered both axes and text by default
 - /spinner: Spinner({ className? }) — 8 bars, clockwise trail, 1em, aria-hidden
-- /button: Button({ variant? (filled), color? (brand), size?, corner?, line?, colorStyle?, state?, loading?, disabled?, icon?, square?, prefix?, suffix?, ...button }) or with href: next/link Link (or link component), disabled link has no href and aria-disabled; BUTTON_AXES
+- /button: Button({ variant? (filled), color? (brand), size?, corner?, line?, colorStyle?, state?, loading?, disabled?, icon?, square?, prefix?, suffix?, ...button }) or with href: next/link Link (or link component), disabled link has no href and aria-disabled; "use client"
+- /button-axis: BUTTON_AXES { variant, state, size } (server-safe)
+- /choice: Choice({ label, options: { value, label }[], value, onChange, size?, color? (foreground), className? }) — radiogroup, roving tab stop, arrows/Home/End
+- /interface-styles: interfaceStyles(configuration) → style-web-library StyleConfiguration (groups color [inherit = system], corner, line)
+- /style-switch: StyleSwitch({ configuration, group, label, labels?, size?, className? }) — Choice over a style group, remembered
