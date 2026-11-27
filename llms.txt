@@ -21,3 +21,8 @@
 - /checkbox: Checkbox({ label, checked?, defaultChecked?, onChange?(checked), size? (small), color? (brand), disabled?, state?, ...input }) — "use client"
 - /radio-group: RadioGroup({ label, options: { value, label }[], name?, value?, defaultValue?, onChange?(value), disabled?, error?, state?, ...look }) — role radiogroup, round marks; "use client"
 - /switch: Switch({ label, checked?, defaultChecked?, onChange?(checked) → void | Promise<boolean | void> (false flips back), disabled?, state?, ...look (corner circle, size small) }) — role switch; "use client"
+- /wrapper: Wrapper(box properties) — inline-size 100%, max 1280 + 2×16, centered, padding-inline 16
+- /card: Card({ title?, headingLevel? (2), description?, action?, children, ...box }) — outlined foreground article, padding 24, action centered beside the content, wraps under it
+- /separator: Separator({ orientation? (horizontal | vertical), color? (foreground), line?, className? }) — <hr> in the color's border color
+- /badge: Badge(box properties) — span, filled brand small, inline
+- /avatar: Avatar({ name, src?, size? (medium), color? (brand), corner? (circle), colorStyle?, line?, className? }); initials(name) — img, or initials on a filled box when missing or failing; "use client"

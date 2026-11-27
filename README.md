@@ -96,6 +96,11 @@ everything below it: on the page, in one part of it, or on one piece.
 | `…/checkbox`                | `Checkbox({ label, checked?, defaultChecked?, onChange? })`                                                               | Outlined, filled once checked, the check growing in                        |
 | `…/radio-group`             | `RadioGroup({ label, options, value?, defaultValue?, onChange?, error? })`                                                | Native radios sharing a name, round, filled once chosen                    |
 | `…/switch`                  | `Switch({ label, checked?, defaultChecked?, onChange? })`                                                                 | On/off; flips at once, busy while an async change runs, back if refused    |
+| `…/wrapper`                 | `Wrapper(box)`                                                                                                            | The page's width: up to 1280, centered, 16 a side                          |
+| `…/card`                    | `Card({ title?, headingLevel?, description?, action?, children })`                                                        | One thing: content on one side, its actions centered on the other          |
+| `…/separator`               | `Separator({ orientation?, color?, line? })`                                                                              | A horizontal (or vertical) line in the line style                          |
+| `…/badge`                   | `Badge(box)`                                                                                                              | A short label in running text: small, filled, brand                        |
+| `…/avatar`                  | `Avatar({ name, src?, size?, color?, corner? })`, `initials(name)`                                                        | A picture, or the initials when there is none; round                       |
 
 ### Box
 
