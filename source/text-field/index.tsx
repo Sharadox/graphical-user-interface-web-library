@@ -50,7 +50,7 @@ export function TextField(properties: TextFieldProperties) {
           state={state ?? (disabled ? "disabled" : "enabled")}
           prefix={prefix}
           suffix={suffix}
-          className={classNames(multiline && styles.multiline, className)}
+          className={classNames(styles.field, multiline && styles.multiline, className)}
           {...(multiline && { "data-multiline": "" })}
         >
           {multiline ? (

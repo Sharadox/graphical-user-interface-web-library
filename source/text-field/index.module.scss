@@ -10,14 +10,14 @@
   border: 0;
   outline: 0;
   background: transparent;
-  // The typed text is its color's hovered text: foreground for middleground, the color itself otherwise.
-  color: var(--current-hover-color);
+  // The box's text color: the color's own on a fill (its "on" color), so it always reads.
+  color: inherit;
   font: inherit;
   text-align: start;
 
   &::placeholder {
-    color: var(--current-color);
-    opacity: 0.7;
+    color: inherit;
+    opacity: 0.6;
   }
 
   &:disabled {
@@ -34,4 +34,9 @@
 // A text area's sections sit at its top, beside the first line.
 :where(.multiline) {
   align-items: stretch;
+}
+
+// Not filled, the typed text is the color's hovered text: foreground in a middleground field, the color otherwise.
+:where(.field:not([data-variant="filled"])) :where(.control) {
+  color: var(--current-hover-color);
 }
