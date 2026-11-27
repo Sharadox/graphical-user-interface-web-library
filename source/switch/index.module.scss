@@ -25,8 +25,9 @@
   }
 }
 
-// Twice as wide as high; the knob is a square of the track's inner height, gliding to the far end when on.
-:where(.track) {
+// Twice as wide as high; the knob is a square of the track's inner height, gliding to the far end when on. Inside the
+// switch, so these beat the box's own (zero-weight) size and padding whichever style sheet loads last.
+:where(.switch) .track {
   justify-content: start;
   inline-size: calc(var(--current-minimum-size) * 2);
   min-inline-size: calc(var(--current-minimum-size) * 2);
