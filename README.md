@@ -112,6 +112,7 @@ everything below it: on the page, in one part of it, or on one piece.
 | `…/skeleton-value`          | `SkeletonValue({ label?, width?, circle? })`                                                                              | A shimmering shape for one value                                           |
 | `…/copy-button`             | `CopyButton({ value, label, copiedLabel, onCopied? })`                                                                    | Copies a value and says so for two seconds                                 |
 | `…/code-boxes`              | `CodeBoxes({ label, digitLabel, ofLabel, name?, length?, onComplete? })`                                                  | One field box per digit of a one-time code                                 |
+| `…/navigation`              | `Navigation({ brand, label, links, actions?, menuLabel, closeLabel, collapse? })`                                         | The sticky bar, and a phone menu below `collapse` (960)                    |
 
 ### Box
 
