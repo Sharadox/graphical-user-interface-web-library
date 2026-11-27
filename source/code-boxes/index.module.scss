@@ -1,0 +1,28 @@
+// The boxes share the width, each at least as tall as a large field, the digits centered and large.
+:where(.boxes) {
+  display: flex;
+  gap: var(--scale-8);
+  inline-size: 100%;
+}
+
+.cell {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+:where(.box) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--section-minimum-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--current-hover-color);
+  font: inherit;
+  font-size: var(--scale-24);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}

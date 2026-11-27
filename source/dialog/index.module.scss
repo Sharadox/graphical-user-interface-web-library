@@ -1,0 +1,59 @@
+// Always in the middle of the screen, whatever a site resets margins and positions to.
+:where(.dialog) {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  inline-size: min(440px, calc(100vw - 2 * var(--scale-16)));
+  block-size: fit-content;
+  max-block-size: calc(100dvh - 2 * var(--scale-16));
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: var(--line-thickness) var(--line-style) var(--foreground-border-color);
+  border-radius: var(--corner-radius);
+  background: var(--background-color);
+  box-shadow: 0 var(--scale-24) var(--scale-64) rgb(0 0 0 / 25%);
+  color: var(--foreground-color);
+  font-family: var(--font-family);
+  scrollbar-width: thin;
+
+  &::backdrop {
+    background: rgb(0 0 0 / 50%);
+    -webkit-backdrop-filter: blur(var(--scale-4));
+    backdrop-filter: blur(var(--scale-4));
+    animation: fade var(--duration) var(--easing);
+  }
+
+  &[open] {
+    animation: rise var(--duration) var(--easing);
+  }
+
+  // Leaving: the same movement, backwards.
+  &[data-closing] {
+    animation: rise var(--duration) var(--easing) reverse forwards;
+  }
+
+  &[data-closing]::backdrop {
+    animation: fade var(--duration) var(--easing) reverse forwards;
+  }
+}
+
+:where(.title) {
+  margin: 0;
+  font-size: var(--scale-24);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--scale-16)) scale(0.98);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
