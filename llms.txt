@@ -14,3 +14,10 @@
 - /choice: Choice({ label, options: { value, label }[], value, onChange, size?, color? (foreground), className? }) — radiogroup, roving tab stop, arrows/Home/End
 - /interface-styles: interfaceStyles(configuration) → style-web-library StyleConfiguration (groups color [inherit = system], corner, line)
 - /style-switch: StyleSwitch({ configuration, group, label, labels?, size?, className? }) — Choice over a style group, remembered
+- /box: also field?: boolean (form-control box: text cursor, field font weight, focus-within ring, lines between sections)
+- /field: Field({ label, hideLabel?, hint?, error?, id?, className?, children: ({ id, aria-describedby?, aria-invalid? }) => node })
+- /text-field: TextField({ label, hideLabel?, hint?, error? (color → error), prefix?, suffix?, variant? (outlined), color? (middleground), size?, corner?, line?, colorStyle?, state?, multiline? (textarea, rows 3), ...input or textarea attributes })
+- /toggle-mark: ToggleMark({ type: "checkbox" | "radio", label, checked, onChange(checked), state?, ...look, ...input }) — native input over a square Box (outlined → filled)
+- /checkbox: Checkbox({ label, checked?, defaultChecked?, onChange?(checked), size? (small), color? (brand), disabled?, state?, ...input }) — "use client"
+- /radio-group: RadioGroup({ label, options: { value, label }[], name?, value?, defaultValue?, onChange?(value), disabled?, error?, state?, ...look }) — role radiogroup, round marks; "use client"
+- /switch: Switch({ label, checked?, defaultChecked?, onChange?(checked) → void | Promise<boolean | void> (false flips back), disabled?, state?, ...look (corner circle, size small) }) — role switch; "use client"

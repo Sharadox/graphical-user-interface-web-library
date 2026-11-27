@@ -46,6 +46,11 @@ export interface BoxProperties extends BoxLook, Omit<HTMLAttributes<HTMLElement>
   square?: boolean;
   /** Reacts to the pointer and the keyboard: hover and pressed looks, a pointer cursor, states. */
   interactive?: boolean;
+  /**
+   * Holds a form control (a text field, a select): interactive, with a text cursor, the field's font weight, a focus
+   * ring while anything inside has focus, and a line between its sections.
+   */
+  field?: boolean;
   /** An interactive box's state (`enabled` by default). */
   state?: BoxState;
   /** Anything else the element takes (`href`, `type`, `disabled`…). */

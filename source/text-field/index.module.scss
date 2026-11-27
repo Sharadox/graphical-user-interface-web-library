@@ -1,0 +1,42 @@
+// The control fills the field box's content section and takes its looks: no border, background or outline of its
+// own (the box draws them, and its focus ring circles the whole field).
+:where(.control) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--section-minimum-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  // The box's text color: the color's own on a fill (its "on" color), so it always reads.
+  color: inherit;
+  font: inherit;
+  text-align: start;
+
+  &::placeholder {
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+:where(textarea.control) {
+  min-block-size: calc(var(--section-minimum-size) * 2);
+  padding-block: var(--scale-8);
+  resize: vertical;
+}
+
+// A text area's sections sit at its top, beside the first line.
+:where(.multiline) {
+  align-items: stretch;
+}
+
+// Not filled, the typed text is the color's hovered text: foreground in a middleground field, the color otherwise.
+:where(.field:not([data-variant="filled"])) :where(.control) {
+  color: var(--current-hover-color);
+}

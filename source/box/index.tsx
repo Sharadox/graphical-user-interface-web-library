@@ -42,10 +42,12 @@ export function lookAttributes(look: BoxLook): Record<string, string> {
  * <Box variant="outlined" color="brand" padding={16} direction={{ base: "top-to-bottom", 960: "left-to-right" }}>…</Box>
  */
 export function Box(properties: BoxProperties) {
-  const { as: Element = "div", prefix, suffix, square, interactive, state, className, children, ...rest } = properties;
+  const { as: Element = "div", prefix, suffix, square, field, state, className, children, ...rest } = properties;
+  const interactive = properties.interactive || field;
   const look: BoxLook = {};
   const element: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(rest)) {
+    if (key === "interactive") continue;
     if (LOOK_ATTRIBUTES.some(([name]) => name === key)) look[key as keyof BoxLook] = value as never;
     else element[key] = value;
   }
@@ -57,6 +59,7 @@ export function Box(properties: BoxProperties) {
       className={classNames(styles.box, className)}
       {...lookAttributes(look)}
       {...(square && { "data-square": "" })}
+      {...(field && { "data-field": "" })}
       {...(interactive && { "data-interactive": "", "data-state": currentState })}
       {...(currentState === "disabled" && { "aria-disabled": "true" })}
       {...(currentState === "loading" && { "aria-busy": "true" })}

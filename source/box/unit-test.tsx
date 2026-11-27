@@ -111,3 +111,16 @@ test("while loading it shows the spinner over its content, which keeps its size 
   expect(button.querySelector("[data-spinner]")).not.toBeNull();
   expect(button.querySelector('[data-section="content"]')!.textContent).toBe("Save");
 });
+
+test("a field box holds a form control: marked, interactive, and its sections apart", () => {
+  const { container } = render(
+    <Box field prefix="€">
+      <input aria-label="Price" />
+    </Box>,
+  );
+  const box = container.firstElementChild!;
+  expect(box.getAttribute("data-field")).toBe("");
+  expect(box.getAttribute("data-interactive")).toBe("");
+  expect(box.getAttribute("data-state")).toBe("enabled");
+  expect([...box.children].map((section) => section.getAttribute("data-section"))).toEqual(["prefix", "content"]);
+});
