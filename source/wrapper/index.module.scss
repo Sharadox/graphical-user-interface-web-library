@@ -1,0 +1,8 @@
+// A plain class, so its width and padding beat the box's own (zero-weight) values.
+.wrapper {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: calc(var(--wrapper-width) + 2 * var(--wrapper-padding));
+  margin-inline: auto;
+  padding-inline: var(--wrapper-padding);
+}
