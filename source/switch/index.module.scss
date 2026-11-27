@@ -34,9 +34,11 @@
   padding: var(--line-thickness);
 }
 
-:where(.track) > * {
-  // Boxes wrap their children in a section only with sections; the knob sits directly in the track.
-  flex: none;
+:where(.switch) .track > * {
+  // An interactive box puts its content in a padded section: here it holds only the knob, from the track's start.
+  flex: 1 1 auto;
+  justify-content: start;
+  padding: 0;
 }
 
 :where(.knob) {
