@@ -7,6 +7,8 @@
 - Layout pieces: `Wrapper` (the page's width), `Card`, `Separator`, `Badge` and `Avatar`.
 - Choosing: `Select` (the interface's own, never the browser's), `Combobox` (filters as you type, ignoring case and
   accents) and `NumberField` (minus and plus sections), on a shared `Listbox`.
+- Feedback and helpers: `Dialog`, `Tip`, `NotificationProvider` with `useNotification` (tones in the interface's
+  colors), `Skeleton`, `SkeletonValue`, `CopyButton` and `CodeBoxes`.
 - Every module style sheet is tested to compile as a pure CSS module, as Next.js needs.
 
 ## 0.1.0
