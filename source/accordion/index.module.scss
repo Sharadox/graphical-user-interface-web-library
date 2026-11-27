@@ -1,0 +1,56 @@
+:where(.heading) {
+  margin: 0;
+  font-size: inherit;
+}
+
+:where(.button) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--scale-16);
+  inline-size: 100%;
+  min-block-size: var(--large-minimum-size);
+  padding: var(--scale-12) var(--scale-16);
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--interactive-font-weight);
+  text-align: start;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--focus-thickness) solid var(--current-color);
+    outline-offset: calc(-1 * var(--focus-thickness));
+  }
+}
+
+:where(.chevron) {
+  flex: none;
+  transition: transform var(--duration) var(--easing);
+}
+
+:where(.button[aria-expanded="true"]) :where(.chevron) {
+  transform: rotate(180deg);
+}
+
+// The region grows from nothing to its content's height (a grid row from 0fr to 1fr), and back.
+:where(.region) {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration) var(--easing);
+}
+
+:where(.region[data-open]) {
+  grid-template-rows: 1fr;
+}
+
+:where(.inner) {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+:where(.content) {
+  padding: 0 var(--scale-16) var(--scale-16);
+  text-align: start;
+}

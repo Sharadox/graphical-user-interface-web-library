@@ -113,6 +113,9 @@ everything below it: on the page, in one part of it, or on one piece.
 | `…/copy-button`             | `CopyButton({ value, label, copiedLabel, onCopied? })`                                                                    | Copies a value and says so for two seconds                                 |
 | `…/code-boxes`              | `CodeBoxes({ label, digitLabel, ofLabel, name?, length?, onComplete? })`                                                  | One field box per digit of a one-time code                                 |
 | `…/navigation`              | `Navigation({ brand, label, links, actions?, menuLabel, closeLabel, collapse? })`                                         | The sticky bar, and a phone menu below `collapse` (960)                    |
+| `…/tabs`                    | `Tabs({ label, tabs, value?, defaultValue?, onChange? })`                                                                 | Tab buttons over the chosen tab's panel, with the arrow keys               |
+| `…/accordion`               | `Accordion({ items, multiple?, open?, defaultOpen?, onChange? })`                                                         | Titles that open and close their content smoothly                          |
+| `…/date-picker`             | `DatePicker({ label, value?, min?, max?, locale?, previousLabel, nextLabel })`, `parseDay`, `formatDay`, `monthDays`      | A field opening a calendar grid                                            |
 
 ### Box
 
