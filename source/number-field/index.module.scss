@@ -1,0 +1,29 @@
+:where(.input) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--section-minimum-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  appearance: textfield;
+
+  // The browser's own arrows go: the minus and plus sections replace them.
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+}
+
+// The buttons fill their sections edge to edge, without corners of their own (a plain class, to beat the box's).
+.button {
+  align-self: stretch;
+  border-radius: 0;
+}

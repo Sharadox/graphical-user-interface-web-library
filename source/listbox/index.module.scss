@@ -1,0 +1,38 @@
+// Under its field, above everything after it; a nearly opaque background behind the glass so options read.
+.list {
+  position: absolute;
+  z-index: 20;
+  inset-block-start: calc(100% + var(--scale-4));
+  inset-inline: 0;
+  max-block-size: 280px;
+  margin: 0;
+  overflow-y: auto;
+  list-style: none;
+  background: rgb(var(--background-color-rgb) / 85%);
+  scrollbar-width: thin;
+  scrollbar-color: var(--foreground-border-color) transparent;
+  overscroll-behavior: contain;
+}
+
+:where(.option) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--scale-8);
+  min-block-size: var(--current-minimum-size);
+  padding-inline: var(--current-section-padding);
+  border-radius: var(--corner-radius);
+  cursor: pointer;
+  text-align: start;
+  transition: background-color var(--quick-duration) var(--easing);
+}
+
+:where(.option[data-active]) {
+  background: var(--current-transparent-hover-color);
+}
+
+:where(.empty) {
+  padding: var(--scale-8);
+  color: var(--middleground-color);
+  text-align: start;
+}

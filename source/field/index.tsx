@@ -6,7 +6,7 @@ import styles from "./index.module.scss";
 /**
  * A form control with its label above it and its hint and error under it, all linked for assistive technology: the
  * label names the control, the hint and error describe it, and an error marks it invalid. The control is drawn by
- * `children`, which receives the attributes to spread on it.
+ * `children`, which receives the attributes to spread on it. The label's id is the control's plus `-label`.
  *
  * @example
  * <Field label="Email" hint="We never share it." error={error}>{(control) => <input {...control} type="email" />}</Field>
@@ -24,7 +24,12 @@ export function Field({ label, hideLabel, hint, error, id, className, children }
   };
   return (
     <Box direction="top-to-bottom" align="stretch" textAlign="start" gap={8} className={className}>
-      <label htmlFor={controlId} className={styles.label} {...(hideLabel && { "data-hidden": "" })}>
+      <label
+        id={`${controlId}-label`}
+        htmlFor={controlId}
+        className={styles.label}
+        {...(hideLabel && { "data-hidden": "" })}
+      >
         {label}
       </label>
       {children(control)}
