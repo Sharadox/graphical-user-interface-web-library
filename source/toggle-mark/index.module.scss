@@ -1,0 +1,57 @@
+:where(.toggle) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--scale-8);
+  cursor: pointer;
+  text-align: start;
+}
+
+:where(.control) {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+
+// The real input, invisible, over the drawn mark: it takes the clicks, the keyboard and the form.
+:where(.native) {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+:where(.toggle:has(.native:disabled)) {
+  cursor: default;
+}
+
+:where(.native:focus-visible + .mark) {
+  outline: var(--focus-thickness) solid var(--current-color);
+  outline-offset: var(--focus-offset);
+}
+
+// The check (or dot) grows in when checked and shrinks away when not.
+:where(.mark) > * > :where(svg, .dot) {
+  transform: scale(0);
+  transition: transform var(--duration) var(--easing);
+}
+
+:where(.toggle[data-checked] .mark) > * > :where(svg, .dot) {
+  transform: scale(1);
+}
+
+:where(.dot) {
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: var(--corner-radius);
+  background: currentcolor;
+}
+
+:where(.label) {
+  font-size: var(--current-font-size);
+}

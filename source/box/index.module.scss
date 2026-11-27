@@ -60,6 +60,34 @@
   opacity: var(--disabled-opacity);
 }
 
+// A field: typed into, so a text cursor and the field's weight; its focus ring circles the whole box, and a line
+// parts each prefix and suffix from the content.
+:where(.box[data-field]) {
+  cursor: text;
+  font-weight: var(--current-field-font-weight);
+
+  &:active {
+    cursor: text;
+  }
+
+  &:focus-within {
+    outline: var(--focus-thickness) solid var(--current-color);
+    outline-offset: var(--focus-offset);
+  }
+
+  > :where([data-section="prefix"]) {
+    border-inline-end: var(--box-border-thickness) var(--line-style) var(--box-border-color);
+  }
+
+  > :where([data-section="suffix"]) {
+    border-inline-start: var(--box-border-thickness) var(--line-style) var(--box-border-color);
+  }
+}
+
+:where(.box[data-field][data-state="disabled"]) {
+  cursor: default;
+}
+
 // Sections: the content padded by the size's section padding, prefix and suffix at least square.
 :where(.content) {
   display: flex;

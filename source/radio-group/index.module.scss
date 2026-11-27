@@ -1,0 +1,10 @@
+:where(.label) {
+  font-size: var(--current-font-size);
+  font-weight: var(--current-font-weight);
+}
+
+:where(.error) {
+  margin: 0;
+  color: var(--current-color);
+  font-size: var(--scale-12);
+}

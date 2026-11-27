@@ -90,6 +90,12 @@ everything below it: on the page, in one part of it, or on one piece.
 | `…/choice`                  | `Choice({ label, options, value, onChange, size?, color? })`                                                              | A segmented choice: a radio group, one tab stop, arrow keys                |
 | `…/interface-styles`        | `interfaceStyles(configuration)`                                                                                          | The color, corner and line styles as remembered `style-web-library` groups |
 | `…/style-switch`            | `StyleSwitch({ configuration, group, label, labels? })`                                                                   | A `Choice` that switches a style group for the whole page                  |
+| `…/field`                   | `Field({ label, hideLabel?, hint?, error?, id?, children: (control) => … })`                                              | A control's label, hint and error, linked for assistive technology         |
+| `…/text-field`              | `TextField({ label, hint?, error?, prefix?, suffix?, multiline?, …input })`                                               | A text field (or with `multiline` a text area) in an outlined field box    |
+| `…/toggle-mark`             | `ToggleMark({ type, label, checked, onChange })`                                                                          | A native checkbox or radio over a drawn mark (used by the two below)       |
+| `…/checkbox`                | `Checkbox({ label, checked?, defaultChecked?, onChange? })`                                                               | Outlined, filled once checked, the check growing in                        |
+| `…/radio-group`             | `RadioGroup({ label, options, value?, defaultValue?, onChange?, error? })`                                                | Native radios sharing a name, round, filled once chosen                    |
+| `…/switch`                  | `Switch({ label, checked?, defaultChecked?, onChange? })`                                                                 | On/off; flips at once, busy while an async change runs, back if refused    |
 
 ### Box
 
@@ -140,6 +146,23 @@ replaces the words and keeps their size. Hover and pressed looks never apply whi
 
 Without `href` it is a `<button type="button">`. With one, it is next/link's `Link`, or the site's own `link`. It is
 filled in brand by default. A disabled link loses its address.
+
+### Form controls
+
+```tsx
+<TextField label="Email" type="email" name="email" hint="We never share it." error={error} />
+<TextField label="Price" type="number" prefix="€" suffix=".00" />
+<TextField label="Message" multiline rows={6} />
+<Checkbox label="Remember me" name="remember" />
+<RadioGroup label="Contact me by" name="contact" options={[{ value: "email", label: "Email" }]} />
+<Switch label="Email me" defaultChecked onChange={async (on) => (await save(on)).ok} />
+```
+
+A field box (`Box field`) is interactive with a text cursor and the field's font weight. Its focus ring circles the
+whole field, and a line parts each prefix and suffix from the input. Text fields are outlined middleground by
+default, and switch to the error color when they have an error. The typed text is the color's hovered text, so
+foreground on middleground. Checkboxes and radios are drawn like buttons: outlined, then filled once checked. The
+knob and checks move in 0.25 s.
 
 ## Develop
 

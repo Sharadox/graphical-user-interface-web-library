@@ -1,6 +1,6 @@
 {
   "name": "@sharadox/graphical-user-interface-web-library",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "One generic, accessible, fully configurable component library: every interface piece in every variant, color, corner, line, size and state, styled from a single source of truth that each brand configures.",
   "private": false,
   "license": "SEE LICENSE IN LICENCA.md",
