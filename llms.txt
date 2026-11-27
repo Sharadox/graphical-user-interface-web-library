@@ -38,3 +38,4 @@
 - /skeleton-value: SkeletonValue({ label?, width? ("8ch"), circle? }) — inline shimmering shape
 - /copy-button: CopyButton({ value, label, copiedLabel, onCopied? }) — outlined middleground small Button; "use client"
 - /code-boxes: CodeBoxes({ label, digitLabel, ofLabel, name?, length? (6), onComplete?(code), invalid?, disabled?, describedBy?, autoFocus? }) — one large outlined field Box per digit; paste fills all; Backspace/Delete clear; "use client"
+- /navigation: Navigation({ brand, label, links: { href, label, current? }[], actions?, menuLabel, closeLabel, collapse?: 640 | 960 (default) | 1280, className? }) — sticky glass Wrapper header; below collapse a menu button (icon menu/close) opens a fixed menu under the bar with the links (large) and actions; useMenu from menu-web-library; "use client"

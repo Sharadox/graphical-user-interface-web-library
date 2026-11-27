@@ -65,7 +65,8 @@
     "*.{json,md,yml,yaml,scss}": "prettier --write"
   },
   "dependencies": {
-    "@sharadox/icon-web-library": "0.7.0-development.39",
+    "@sharadox/icon-web-library": "0.7.0-navigation.41",
+    "@sharadox/menu-web-library": "^0.1.3",
     "@sharadox/style-web-library": "^0.3.1",
     "@sharadox/web-library": "^0.11.1"
   },

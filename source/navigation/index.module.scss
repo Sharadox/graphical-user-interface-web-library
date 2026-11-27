@@ -1,0 +1,64 @@
+// The bar: sticky, see-through over the page (glass), a line under it. Plain classes, to beat the box's own values.
+.bar {
+  position: sticky;
+  z-index: 50;
+  inset-block-start: 0;
+  min-block-size: var(--bar-height, 64px);
+  padding-block: var(--scale-8);
+  border-block-end: var(--line-thickness) var(--line-style) var(--foreground-border-color);
+  background: rgb(var(--background-color-rgb) / 80%);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+:where(.brand) {
+  flex: none;
+}
+
+// The phone menu: under the bar, over the whole page, scrolling when it doesn't fit.
+.menu {
+  position: fixed;
+  z-index: 49;
+  inset: var(--bar-height, 64px) 0 0;
+  overflow-y: auto;
+  padding: var(--scale-16) var(--wrapper-padding) var(--scale-32);
+  background: var(--background-color);
+  overscroll-behavior: contain;
+  animation: open var(--duration) var(--easing);
+}
+
+.menuLink {
+  justify-content: start;
+}
+
+// Wide: links and actions in the bar, no menu button. Narrow: only the brand and the menu button.
+.toggle {
+  display: none;
+}
+
+@each $width in 640, 960, 1280 {
+  @media (max-width: #{$width - 0.02}px) {
+    .bar[data-collapse="#{$width}"] {
+      .wide {
+        display: none;
+      }
+
+      .toggle {
+        display: inline-flex;
+      }
+    }
+  }
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--scale-8)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation: none;
+  }
+}
