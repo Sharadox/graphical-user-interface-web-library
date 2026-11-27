@@ -11,7 +11,9 @@
 
 :where(.description) {
   margin: 0;
-  color: var(--middleground-color);
+  // The card's own text, softened, so it reads on any fill.
+  color: inherit;
+  opacity: 0.7;
   font-size: var(--scale-14);
 }
 

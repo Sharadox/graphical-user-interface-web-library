@@ -2,6 +2,8 @@
   overflow: hidden;
   inline-size: var(--current-minimum-size);
   block-size: var(--current-minimum-size);
+  // Two letters always fit: the initials grow with the avatar.
+  font-size: calc(var(--current-minimum-size) * 0.4);
   font-weight: 600;
   line-height: 1;
 }
