@@ -1,0 +1,20 @@
+:where(.body) {
+  flex: 1 1 240px;
+  min-inline-size: 0;
+}
+
+:where(.title) {
+  margin: 0;
+  font-size: var(--scale-16);
+  font-weight: 600;
+}
+
+:where(.description) {
+  margin: 0;
+  color: var(--middleground-color);
+  font-size: var(--scale-14);
+}
+
+:where(.action) {
+  flex: none;
+}

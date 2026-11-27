@@ -1,0 +1,12 @@
+:where(.separator) {
+  flex: none;
+  align-self: stretch;
+  margin: 0;
+  border: 0;
+  border-block-start: var(--line-thickness) var(--line-style) var(--current-border-color);
+}
+
+:where(.separator[data-orientation="vertical"]) {
+  border-block-start: 0;
+  border-inline-start: var(--line-thickness) var(--line-style) var(--current-border-color);
+}

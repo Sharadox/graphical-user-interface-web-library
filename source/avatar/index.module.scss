@@ -1,0 +1,14 @@
+:where(.avatar) {
+  overflow: hidden;
+  inline-size: var(--current-minimum-size);
+  block-size: var(--current-minimum-size);
+  font-weight: 600;
+  line-height: 1;
+}
+
+:where(.picture) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}

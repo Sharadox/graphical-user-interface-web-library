@@ -1,0 +1,7 @@
+// A plain class, so its padding beats the box's own (zero-weight) padding.
+.badge {
+  display: inline-flex;
+  vertical-align: middle;
+  padding-inline: var(--scale-8);
+  white-space: nowrap;
+}
