@@ -177,7 +177,7 @@
   display: flex;
   flex: none;
   justify-content: center;
-  align-items: center;
+  align-items: inherit;
   align-self: stretch;
   min-block-size: var(--section-minimum-size);
   min-inline-size: var(--section-minimum-size);

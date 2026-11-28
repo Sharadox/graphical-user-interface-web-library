@@ -252,7 +252,10 @@ test("a box with sections pads inside them, so the lines between them run from e
   expect(box).toMatch(
     /\.content\)[^{]*\{[^}]*align-self: stretch;[^}]*padding: var\(--section-box-padding\) calc\(var\(--section-padding\) \+ var\(--section-box-padding\)\)/,
   );
-  expect(box).toMatch(/\.section\)[^{]*\{[^}]*align-self: stretch;[^}]*padding: var\(--section-box-padding\)/);
+  // As tall as the box, a prefix or a suffix sits where the box aligns its content.
+  expect(box).toMatch(
+    /\.section\)[^{]*\{[^}]*align-items: inherit;[^}]*align-self: stretch;[^}]*padding: var\(--section-box-padding\)/,
+  );
 });
 
 test("a field's typed text is never clipped from a gradient (the browser draws it unscrolled): it is the flat color", () => {
