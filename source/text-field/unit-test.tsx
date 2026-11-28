@@ -5,7 +5,7 @@ import { TextField } from "@sharadox/graphical-user-interface-web-library/text-f
 afterEach(cleanup);
 const box = (control: HTMLElement) => control.closest("[data-field]")!;
 
-test("an input named by its label, in an outlined middleground field box", () => {
+test("an input named by its label, in an outlined index field box", () => {
   const change = vi.fn();
   render(<TextField label="Name" name="name" placeholder="Your name" onChange={change} />);
   const input = screen.getByRole("textbox", { name: "Name" });
@@ -13,8 +13,8 @@ test("an input named by its label, in an outlined middleground field box", () =>
   expect(input.getAttribute("name")).toBe("name");
   expect(input.getAttribute("placeholder")).toBe("Your name");
   expect(box(input).getAttribute("data-variant")).toBe("outlined");
-  expect(box(input).getAttribute("data-color")).toBe("middleground");
-  expect(box(input).getAttribute("data-state")).toBe("none");
+  expect(box(input).getAttribute("data-color")).toBe("index");
+  expect(box(input).getAttribute("data-state")).toBe("index");
   fireEvent.change(input, { target: { value: "Ana" } });
   expect(change).toHaveBeenCalledOnce();
 });

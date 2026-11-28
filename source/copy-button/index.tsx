@@ -5,7 +5,7 @@ import type { CopyButtonProperties } from "@sharadox/graphical-user-interface-we
 
 /**
  * Copies a value to the clipboard (a key, a set of recovery codes) and says so for two seconds, with a tick: an
- * outlined middleground button.
+ * outlined index button.
  *
  * @example
  * <CopyButton value={secret} label="Copy" copiedLabel="Copied." />
@@ -20,8 +20,8 @@ export function CopyButton({ value, label, copiedLabel, onCopied }: CopyButtonPr
   return (
     <Button
       variant="outlined"
-      color="middleground"
-      size="small"
+      color="index"
+      size="medium"
       icon={copied ? "check" : "copy"}
       onClick={async () => {
         await navigator.clipboard.writeText(value);

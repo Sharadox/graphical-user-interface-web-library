@@ -19,7 +19,7 @@
     outline: none;
 
     > :where(.track) {
-      outline: var(--focus-thickness) solid var(--current-color);
+      outline: var(--focus-thickness) solid var(--box-focus-color);
       outline-offset: var(--focus-offset);
     }
   }

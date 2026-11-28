@@ -15,26 +15,31 @@ export interface ConstantColor {
    * borders, each at the color's own alphas, in the direction of `--gradient-angle`. Flat without one.
    */
   gradient?: readonly string[];
-  /** The color of text placed on a fill of this color; `foreground` by default. */
+  /** The color of text placed on its fill; `foreground` by default. */
   on?: string;
-  /** The color whose channels its transparent color (hover backgrounds, borders) uses; itself by default. */
-  transparent?: string;
-  /** The color its text turns on hover (outlined, transparent, inline); itself by default. */
+  /** The color its text turns while hovered (outlined, transparent, inline); itself by default. */
   hover?: string;
-  /** The color its fill turns on hover (filled), with that color's text; itself by default. */
-  filledHover?: string;
+  /** The color its text turns while pressed, and its titles' color; its hover color by default. */
+  active?: string;
+  /** The color it fills with (filled) and tints with (hover backgrounds); itself by default. */
+  background?: string;
+  /** The color of its border, at the transparent alpha; its background color by default. */
+  border?: string;
 }
 
 /**
  * A color that is another color: `brand` is `foreground` unless a brand says otherwise. It takes everything from that
- * color (one name for every color style, or one per color style), and may set its own `on`, `transparent` and `hover`.
+ * color (one name for every color style, or one per color style), and may set its own parts.
  */
 export interface ColorReference {
   of: string | PerColorStyle;
   on?: string;
-  transparent?: string;
   hover?: string;
-  filledHover?: string;
+  /** Its hover color when it sets one; the referred color's otherwise. */
+  active?: string;
+  background?: string;
+  /** Its background color when it sets one; the referred color's otherwise. */
+  border?: string;
   /** Its own gradient (the rainbow is foreground, painted with the six hues); the referred color's otherwise. */
   gradient?: readonly string[];
 }
@@ -46,6 +51,12 @@ export type ColorDefinition = ConstantColor | ColorReference;
 export interface ColorStyle {
   scheme: ColorScheme;
 }
+
+/**
+ * A place on a box, from 0 to 1 of its width and height (0, 0 is the top left corner). `inline` instead of `x`
+ * follows the reading direction: 0 is where a line starts (the left, or the right in Arabic).
+ */
+export type Position = { x: number; y: number } | { inline: number; y: number };
 
 /** One interactive size: every value of it, each pointing to a shared value or a length. */
 export type SizeDefinition = Readonly<Record<string, string>>;
@@ -76,6 +87,10 @@ export interface InterfaceConfiguration {
   /** The interactive sizes (`small`, `medium`, `large`) and their values. */
   sizes: Readonly<Record<string, SizeDefinition>>;
   defaultSize: string;
+  /** Every place something can sit on a box (a glow), by name: physical (`top-left`) and logical (`end-start`). */
+  positions: Readonly<Record<string, Position>>;
+  /** Where a glow rests before the pointer comes near. */
+  defaultGlowPosition: string;
   /** Every other shared value, without its leading dashes: `"transparent-color-rgb-alpha": "10%"`. */
   values: Readonly<Record<string, string>>;
 }
@@ -94,5 +109,7 @@ export interface InterfaceOverrides {
   breakpoints?: readonly number[];
   sizes?: Readonly<Record<string, SizeDefinition>>;
   defaultSize?: string;
+  positions?: Readonly<Record<string, Position>>;
+  defaultGlowPosition?: string;
   values?: Readonly<Record<string, string>>;
 }

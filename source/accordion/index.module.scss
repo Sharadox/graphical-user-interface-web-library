@@ -13,15 +13,16 @@
   padding: var(--scale-12) var(--scale-16);
   border: 0;
   background: none;
-  color: inherit;
+  // A title, in its color's active color.
+  color: var(--title-color, var(--current-active-color));
   font: inherit;
   font-weight: var(--interactive-font-weight);
   text-align: start;
   cursor: pointer;
 
   &:focus-visible {
-    outline: var(--focus-thickness) solid var(--current-color);
-    outline-offset: calc(-1 * var(--focus-thickness));
+    outline: var(--focus-thickness) solid var(--focus-color);
+    outline-offset: var(--focus-offset);
   }
 }
 

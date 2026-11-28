@@ -18,6 +18,6 @@ test("vertical, between items in a row", () => {
   const rule = screen.getByRole("separator");
   expect(rule.getAttribute("aria-orientation")).toBe("vertical");
   expect(rule.getAttribute("data-orientation")).toBe("vertical");
-  expect(rule.getAttribute("data-color")).toBe("foreground");
+  expect(rule.getAttribute("data-color")).toBe("index");
   expect(rule.className).toContain("custom");
 });

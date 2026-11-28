@@ -29,7 +29,7 @@ test("shared values, the scale, sizes, corners and lines sit once on the root", 
       "--breakpoint-640:640px",
       "--transparent-color-rgb-alpha:12.5%",
       "--gradient-angle:90deg",
-      "--glow-start-angle:90deg",
+      "--glow-size:max(var(--scale-64), calc(60cqw + 60cqh))",
       "--line-line-solid:1",
       "--dashed-line-solid:0",
       "--line-solid:var(--line-line-solid)",
@@ -59,9 +59,16 @@ test("a color style holds only the sources: each constant color's channels and t
       "--foreground-transparent-hover-color-gradient:var(--black-transparent-hover-color-gradient)",
       "--foreground-color-gradient-weight:var(--black-color-gradient-weight)",
       "--foreground-text-fill:var(--black-text-fill)",
-      "--foreground-filled-hover-color-rgb:var(--black-filled-hover-color-rgb)",
-      "--foreground-transparent-color-rgb:var(--black-transparent-color-rgb)",
       "--foreground-hover-color-rgb:var(--black-hover-color-rgb)",
+      "--foreground-active-color-rgb:var(--black-active-color-rgb)",
+      "--foreground-background-color-rgb:var(--black-background-color-rgb)",
+      "--foreground-border-color-rgb:var(--black-border-color-rgb)",
+      // The focus ring: brand, foreground on a brand fill, background on a foreground fill (brand is foreground).
+      "--focus-color-rgb:var(--brand-color-rgb)",
+      "--red-focus-color-rgb:var(--brand-color-rgb)",
+      "--brand-focus-color-rgb:var(--background-color-rgb)",
+      "--index-focus-color-rgb:var(--background-color-rgb)",
+      "--background-focus-color-rgb:var(--brand-color-rgb)",
       "--background-color-rgb:var(--white-color-rgb)",
       "--background-on-color-rgb:var(--white-on-color-rgb)",
     ]),
@@ -96,37 +103,44 @@ test("every scope derives every value of every color from its sources", () => {
     expect.arrayContaining([
       "--red-color-rgb-alpha:var(--color-rgb-alpha)",
       "--red-color:rgb(var(--red-color-rgb) / var(--red-color-rgb-alpha))",
-      "--red-transparent-color-rgb:var(--red-color-rgb)",
-      "--red-transparent-color-rgb-alpha:var(--transparent-color-rgb-alpha)",
-      "--red-transparent-color:rgb(var(--red-transparent-color-rgb) / var(--red-transparent-color-rgb-alpha))",
-      "--red-transparent-hover-color-rgb-alpha:var(--transparent-hover-color-rgb-alpha)",
-      "--red-transparent-hover-color:rgb(var(--red-transparent-color-rgb) / var(--red-transparent-hover-color-rgb-alpha))",
-      "--red-transparent-active-color-rgb-alpha:var(--transparent-active-color-rgb-alpha)",
-      "--red-transparent-active-color:rgb(var(--red-transparent-color-rgb) / var(--red-transparent-active-color-rgb-alpha))",
-      "--red-border-color:var(--red-transparent-color)",
+      // Its parts: itself, unless it names another color; pressed is as hovered, the border as the background.
       "--red-on-color-rgb:var(--foreground-color-rgb)",
-      "--red-on-color:rgb(var(--red-on-color-rgb))",
       "--red-hover-color-rgb:var(--red-color-rgb)",
+      "--red-active-color-rgb:var(--red-hover-color-rgb)",
+      "--red-background-color-rgb:var(--red-color-rgb)",
+      "--red-border-color-rgb:var(--red-background-color-rgb)",
+      "--red-on-color:rgb(var(--red-on-color-rgb))",
       "--red-hover-color:rgb(var(--red-hover-color-rgb) / var(--red-color-rgb-alpha))",
+      "--red-active-color:rgb(var(--red-active-color-rgb) / var(--red-color-rgb-alpha))",
+      "--red-background-color:rgb(var(--red-background-color-rgb) / var(--red-color-rgb-alpha))",
+      "--red-transparent-color-rgb-alpha:var(--transparent-color-rgb-alpha)",
+      "--red-transparent-color:rgb(var(--red-background-color-rgb) / var(--red-transparent-color-rgb-alpha))",
+      "--red-transparent-hover-color-rgb-alpha:var(--transparent-hover-color-rgb-alpha)",
+      "--red-transparent-hover-color:rgb(var(--red-background-color-rgb) / var(--red-transparent-hover-color-rgb-alpha))",
+      "--red-transparent-active-color-rgb-alpha:var(--transparent-active-color-rgb-alpha)",
+      "--red-transparent-active-color:rgb(var(--red-background-color-rgb) / var(--red-transparent-active-color-rgb-alpha))",
+      "--red-border-color:rgb(var(--red-border-color-rgb) / var(--red-transparent-color-rgb-alpha))",
+      "--red-focus-color:rgb(var(--red-focus-color-rgb))",
       "--red-color-paint:var(--red-color-gradient, linear-gradient(var(--red-color), var(--red-color)))",
-      // Filled stays itself on hover, unless a color says otherwise; a flat color has no gradient.
-      "--red-filled-hover-color-rgb:var(--red-color-rgb)",
-      "--red-filled-hover-on-color-rgb:var(--red-on-color-rgb)",
-      "--red-filled-hover-color-gradient:var(--red-color-gradient)",
-      "--red-filled-hover-color:rgb(var(--red-filled-hover-color-rgb) / var(--red-color-rgb-alpha))",
-      "--red-filled-hover-on-color:rgb(var(--red-filled-hover-on-color-rgb))",
       "--red-color-gradient-weight:0%",
       "--red-color-gradient-display:none",
       "--red-text-fill:currentcolor",
       "--red-text-clip:border-box",
-      // Middleground's fill turns foreground on hover, with foreground's text.
-      "--middleground-filled-hover-color-rgb:var(--foreground-color-rgb)",
-      "--middleground-filled-hover-on-color-rgb:var(--foreground-on-color-rgb)",
+      "--focus-color:rgb(var(--focus-color-rgb))",
+      // Middleground has no exceptions.
+      "--middleground-hover-color-rgb:var(--middleground-color-rgb)",
+      "--middleground-background-color-rgb:var(--middleground-color-rgb)",
+      // Index: middleground, foreground when hovered and pressed, on foreground's fill and border.
+      "--index-color-rgb:var(--middleground-color-rgb)",
+      "--index-on-color-rgb:var(--background-color-rgb)",
+      "--index-hover-color-rgb:var(--foreground-color-rgb)",
+      "--index-active-color-rgb:var(--index-hover-color-rgb)",
+      "--index-background-color-rgb:var(--foreground-color-rgb)",
+      "--index-border-color-rgb:var(--foreground-color-rgb)",
       // The rainbow: the six hues at each alpha, foreground where one flat color is needed.
       "--rainbow-color-rgb:var(--foreground-color-rgb)",
       "--rainbow-on-color-rgb:var(--foreground-color-rgb)",
-      "--rainbow-transparent-color-rgb:var(--foreground-transparent-color-rgb)",
-      "--rainbow-filled-hover-color-rgb:var(--rainbow-color-rgb)",
+      "--rainbow-background-color-rgb:var(--foreground-background-color-rgb)",
       "--rainbow-gradient-angle:var(--gradient-angle)",
       "--rainbow-color-gradient:linear-gradient(var(--rainbow-gradient-angle), rgb(var(--red-color-rgb) / var(--rainbow-color-rgb-alpha)), rgb(var(--yellow-color-rgb) / var(--rainbow-color-rgb-alpha)), rgb(var(--green-color-rgb) / var(--rainbow-color-rgb-alpha)), rgb(var(--cyan-color-rgb) / var(--rainbow-color-rgb-alpha)), rgb(var(--blue-color-rgb) / var(--rainbow-color-rgb-alpha)), rgb(var(--magenta-color-rgb) / var(--rainbow-color-rgb-alpha)))",
       "--rainbow-transparent-color-gradient:linear-gradient(var(--rainbow-gradient-angle), rgb(var(--red-color-rgb) / var(--rainbow-transparent-color-rgb-alpha)), rgb(var(--yellow-color-rgb) / var(--rainbow-transparent-color-rgb-alpha)), rgb(var(--green-color-rgb) / var(--rainbow-transparent-color-rgb-alpha)), rgb(var(--cyan-color-rgb) / var(--rainbow-transparent-color-rgb-alpha)), rgb(var(--blue-color-rgb) / var(--rainbow-transparent-color-rgb-alpha)), rgb(var(--magenta-color-rgb) / var(--rainbow-transparent-color-rgb-alpha)))",
@@ -134,9 +148,6 @@ test("every scope derives every value of every color from its sources", () => {
       "--rainbow-color-gradient-display:block",
       "--rainbow-text-fill:transparent",
       "--rainbow-text-clip:text",
-      // Middleground's border and hover background use foreground's channels; its hovered text is foreground.
-      "--middleground-transparent-color-rgb:var(--foreground-color-rgb)",
-      "--middleground-hover-color-rgb:var(--foreground-color-rgb)",
       // Text on black is white, on white black, on foreground and brand the background.
       "--black-on-color-rgb:var(--white-color-rgb)",
       "--white-on-color-rgb:var(--black-color-rgb)",
@@ -145,25 +156,27 @@ test("every scope derives every value of every color from its sources", () => {
       "--brand-color-rgb:var(--foreground-color-rgb)",
       "--brand-color-gradient:var(--foreground-color-gradient)",
       "--brand-on-color-rgb:var(--background-color-rgb)",
-      "--brand-transparent-color-rgb:var(--foreground-transparent-color-rgb)",
       "--brand-hover-color-rgb:var(--foreground-hover-color-rgb)",
-      "--brand-filled-hover-color-rgb:var(--foreground-filled-hover-color-rgb)",
+      "--brand-active-color-rgb:var(--foreground-active-color-rgb)",
+      "--brand-background-color-rgb:var(--foreground-background-color-rgb)",
+      "--brand-border-color-rgb:var(--foreground-border-color-rgb)",
       "--brand-transparent-color-gradient:var(--foreground-transparent-color-gradient)",
       "--brand-color-gradient-display:var(--foreground-color-gradient-display)",
       "--error-on-color-rgb:var(--red-on-color-rgb)",
     ]),
   );
+  expect(scope.join(";")).not.toMatch(/filled-hover|--red-transparent-color-rgb:/);
 });
 
 test("a component's color points the current values at that color, and the current values are derived on it", () => {
   expect(rule(sheet, '[data-color="red"]')).toEqual([
     "--current-color-rgb:var(--red-color-rgb)",
-    "--current-transparent-color-rgb:var(--red-transparent-color-rgb)",
     "--current-on-color-rgb:var(--red-on-color-rgb)",
     "--current-hover-color-rgb:var(--red-hover-color-rgb)",
-    "--current-filled-hover-color-rgb:var(--red-filled-hover-color-rgb)",
-    "--current-filled-hover-on-color-rgb:var(--red-filled-hover-on-color-rgb)",
-    "--current-filled-hover-color-gradient:var(--red-filled-hover-color-gradient)",
+    "--current-active-color-rgb:var(--red-active-color-rgb)",
+    "--current-background-color-rgb:var(--red-background-color-rgb)",
+    "--current-border-color-rgb:var(--red-border-color-rgb)",
+    "--current-focus-color-rgb:var(--red-focus-color-rgb)",
     "--current-color-gradient:var(--red-color-gradient)",
     "--current-transparent-color-gradient:var(--red-transparent-color-gradient)",
     "--current-transparent-hover-color-gradient:var(--red-transparent-hover-color-gradient)",
@@ -176,15 +189,15 @@ test("a component's color points the current values at that color, and the curre
   expect(rule(sheet, `:root,[data-color],${SCOPE.slice(6)}`)).toEqual(
     expect.arrayContaining([
       "--current-color:rgb(var(--current-color-rgb) / var(--current-color-rgb-alpha))",
-      "--current-transparent-hover-color:rgb(var(--current-transparent-color-rgb) / var(--current-transparent-hover-color-rgb-alpha))",
-      "--current-border-color:var(--current-transparent-color)",
+      "--current-transparent-hover-color:rgb(var(--current-background-color-rgb) / var(--current-transparent-hover-color-rgb-alpha))",
+      "--current-border-color:rgb(var(--current-border-color-rgb) / var(--current-transparent-color-rgb-alpha))",
       "--current-color-paint:var(--current-color-gradient, linear-gradient(var(--current-color), var(--current-color)))",
-      "--current-filled-hover-color:rgb(var(--current-filled-hover-color-rgb) / var(--current-color-rgb-alpha))",
+      "--current-active-color:rgb(var(--current-active-color-rgb) / var(--current-color-rgb-alpha))",
     ]),
   );
   // Only formulas there: the flags and parts come from the color.
   expect(rule(sheet, `:root,[data-color],${SCOPE.slice(6)}`).join(";")).not.toMatch(
-    /--current-(text-fill|color-gradient-weight|filled-hover-color-rgb):/,
+    /--current-(text-fill|color-gradient-weight|hover-color-rgb):/,
   );
 });
 
@@ -220,15 +233,15 @@ test("gradients, corners, lines and sizes switch only their sources, at every br
   expect(inBreakpoint(640, '[data-size-960="large"]')).toBe(false);
 });
 
-test("a style scope without its own color wears foreground, derived again inside it", () => {
+test("a style scope without its own color wears index, derived again inside it", () => {
   const withoutColor = SCOPE.slice(6)
     .split(",")
     .map((selector) => `${selector}:not([data-color])`);
   expect(rule(sheet, `:root,${withoutColor.join(",")}`)).toEqual(
     expect.arrayContaining([
-      "--current-color-rgb:var(--foreground-color-rgb)",
-      "--current-color-gradient:var(--foreground-color-gradient)",
-      "--current-text-fill:var(--foreground-text-fill)",
+      "--current-color-rgb:var(--index-color-rgb)",
+      "--current-color-gradient:var(--index-color-gradient)",
+      "--current-text-fill:var(--index-text-fill)",
     ]),
   );
 });
@@ -236,30 +249,41 @@ test("a style scope without its own color wears foreground, derived again inside
 test("each variant sets the box's values at rest, on hover and while pressed, forced or real", () => {
   expect(rule(sheet, '[data-variant="filled"]')).toEqual(
     expect.arrayContaining([
-      "--box-background:var(--current-color)",
+      "--box-background:var(--current-background-color)",
       "--box-background-image:var(--current-color-gradient, none)",
       "--box-text-color:var(--current-on-color)",
       "--box-text-paint:none",
       "--box-text-fill:currentcolor",
       "--box-text-clip:border-box",
-      "--box-border-color:transparent",
+      // No border at all: its width is padding instead, so it is as big as an outlined box.
+      "--box-border-thickness:0px",
+      "--box-edge-thickness:var(--line-thickness)",
       "--box-ring-display:none",
+      // Its focus ring is drawn on its fill; its glow inside it in the text's color.
+      "--box-focus-color:var(--current-focus-color)",
+      "--box-glow-paint:linear-gradient(var(--current-on-color), var(--current-on-color))",
+      // A title on its fill is in the fill's text color.
+      "--box-title-color:var(--current-on-color)",
     ]),
   );
-  // Filled changes only where a color says so (middleground turns foreground).
+  // Filled stays as it is on hover, for every color.
   expect(rule(sheet, '[data-interactive][data-state="hover"][data-variant="filled"]')).toEqual(
     expect.arrayContaining([
-      "--box-background:var(--current-filled-hover-color)",
-      "--box-background-image:var(--current-filled-hover-color-gradient, none)",
-      "--box-text-color:var(--current-filled-hover-on-color)",
+      "--box-background:var(--current-background-color)",
+      "--box-text-color:var(--current-on-color)",
     ]),
   );
   expect(rule(sheet, '[data-variant="outlined"]')).toEqual(
     expect.arrayContaining([
       "--box-background:transparent",
       "--box-text-color:var(--current-color)",
+      "--box-border-thickness:var(--line-thickness)",
+      "--box-edge-thickness:var(--line-thickness)",
       "--box-border-color:var(--current-border-color)",
       "--box-backdrop:blur(var(--glass-blur))",
+      "--box-focus-color:var(--focus-color)",
+      "--box-glow-paint:var(--current-color-paint)",
+      "--box-title-color:var(--current-active-color)",
       // A gradient color paints its text and its border with the gradient.
       "--box-text-paint:var(--current-color-gradient, none)",
       "--box-text-fill:var(--current-text-fill)",
@@ -278,20 +302,20 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       "--box-border-color:var(--current-border-color)",
     ]),
   );
-  // Only a box left to the pointer (state none) turns on hover; a set state stays as it is.
+  // Only a box left to the pointer (state index) turns on hover; a set state stays as it is.
   expect(
-    rule(sheet, '@media (hover:hover){[data-interactive][data-state="none"]:hover[data-variant="outlined"]'),
+    rule(sheet, '@media (hover:hover){[data-interactive][data-state="index"]:hover[data-variant="outlined"]'),
   ).toContain("--box-background-image:var(--current-transparent-hover-color-gradient, none)");
   expect(sheet).not.toContain('[data-state="enabled"]:hover');
-  expect(
-    rule(
-      sheet,
-      '[data-interactive][data-state="active"][data-variant="transparent"],[data-interactive][data-state="loading"][data-variant="transparent"],[data-interactive][data-state="none"]:active[data-variant="transparent"]',
-    ),
-  ).toEqual(
+  expect(sheet).not.toContain('[data-state="none"]');
+  const pressed =
+    '[data-interactive][data-state="active"][data-variant="transparent"],[data-interactive][data-state="loading"][data-variant="transparent"],[data-interactive][data-state="index"]:active[data-variant="transparent"]';
+  expect(rule(sheet, pressed)).toEqual(
     expect.arrayContaining([
       "--box-background-image:var(--current-transparent-active-color-gradient, none)",
-      "--box-border-color:transparent",
+      "--box-text-color:var(--current-active-color)",
+      "--box-border-thickness:0px",
+      "--box-edge-thickness:var(--line-thickness)",
       "--box-border-paint:none",
     ]),
   );
@@ -300,6 +324,7 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       "--box-display:inline-flex",
       "--box-section-padding:0px",
       "--box-border-thickness:0px",
+      "--box-edge-thickness:0px",
       "--box-minimum-size:0px",
     ]),
   );
@@ -316,9 +341,24 @@ test("direction, alignment, gap and padding are values of the box too", () => {
   expect(sheet).toContain('@property --box-wrap{syntax:"*";inherits:false;initial-value:nowrap}');
   expect(rule(sheet, '[data-gap="24"]')).toEqual(["--box-gap:var(--scale-24)"]);
   expect(rule(sheet, '[data-padding="128"]')).toEqual(["--box-padding:var(--scale-128)"]);
-  expect(rule(sheet, '[data-glow-start="top"]')).toEqual(["--glow-start-angle:-90deg"]);
-  expect(rule(sheet, '[data-glow-start="end"]')).toEqual(["--glow-start-angle:0deg"]);
-  expect(inBreakpoint(960, '[data-glow-start-960="start"]{--glow-start-angle:180deg}')).toBe(true);
+  expect(rule(sheet, '[data-glow-position="top"]')).toEqual(["--glow-x:0.5", "--glow-y:0"]);
+  expect(rule(sheet, '[data-glow-position="bottom-right"]')).toEqual(["--glow-x:1", "--glow-y:1"]);
+  // Logical positions follow the reading direction.
+  expect(rule(sheet, '[data-glow-position="end-start"]')).toEqual([
+    "--glow-x:calc(var(--glow-inline-origin) + var(--glow-inline-direction) * 0)",
+    "--glow-y:1",
+  ]);
+  // The cursor's glow waits, hidden, in the middle.
+  expect(rule(sheet, '[data-glow-position="cursor"]')).toEqual([
+    "--glow-x:0.5",
+    "--glow-y:0.5",
+    "--glow-rest-opacity:0",
+  ]);
+  // Without a position, the default one (bottom).
+  expect(rule(sheet, "[data-glow]:not([data-glow-position])")).toEqual(["--glow-x:0.5", "--glow-y:1"]);
+  expect(inBreakpoint(960, '[data-glow-position-960="left"]{--glow-x:0;--glow-y:0.5}')).toBe(true);
+  const quarter = interfaceStyleSheet(defineInterface({ positions: { "a-quarter": { x: 0.25, y: 0 } } }));
+  expect(rule(quarter, '[data-glow-position="a-quarter"]')).toEqual(["--glow-x:0.25", "--glow-y:0"]);
   expect(inBreakpoint(640, '[data-gap-640="8"]{--box-gap:var(--scale-8)}')).toBe(true);
 });
 
@@ -330,7 +370,8 @@ test("a box's values stay on it: registered without inheritance, starting plain 
   expect(sheet).toContain('@property --box-border-thickness{syntax:"*";inherits:false;initial-value:0px}');
   expect(sheet).toContain('@property --box-text-fill{syntax:"*";inherits:false;initial-value:currentcolor}');
   expect(sheet).toContain('@property --box-ring-display{syntax:"*";inherits:false;initial-value:none}');
-  // The glow's angle is registered so it turns smoothly.
-  expect(sheet).toContain('@property --glow-angle{syntax:"\\3c angle\\3e ";inherits:false;initial-value:90deg}');
+  expect(sheet).toContain('@property --box-edge-thickness{syntax:"*";inherits:false;initial-value:0px}');
+  expect(sheet).toContain('@property --box-focus-color{syntax:"*";inherits:false;initial-value:currentcolor}');
+  expect(sheet).not.toContain("--glow-angle");
   expect(sheet.indexOf("@property")).toBe(0);
 });

@@ -14,7 +14,7 @@ const STEPS: Readonly<Record<string, number>> = { ArrowRight: 1, ArrowDown: 1, A
  * @example
  * <Choice label="Size" options={[{ value: "small", label: "Small" }, …]} value={size} onChange={setSize} />
  */
-export function Choice({ label, options, value, onChange, size, color = "foreground", className }: ChoiceProperties) {
+export function Choice({ label, options, value, onChange, size, color = "index", className }: ChoiceProperties) {
   const group = useRef<HTMLDivElement>(null);
   const chosen = Math.max(
     0,

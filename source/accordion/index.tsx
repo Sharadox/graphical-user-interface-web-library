@@ -8,7 +8,7 @@ import styles from "./index.module.scss";
 /**
  * An accordion: titles that open and close their content, smoothly (its height grows and shrinks). Each title is a
  * heading holding a button, which says whether its region is open; a closed region is inert. One item open at a time,
- * or several with `multiple`. Each item is a box (outlined foreground by default).
+ * or several with `multiple`. Each item is a box (outlined index by default).
  *
  * @example
  * <Accordion items={[{ value: "price", title: "How much is it?", content: <p>…</p> }]} />
@@ -23,7 +23,7 @@ export function Accordion(properties: AccordionProperties) {
     headingLevel = 3,
     className,
     variant = "outlined",
-    color = "foreground",
+    color = "index",
     ...look
   } = properties;
   const id = useId();

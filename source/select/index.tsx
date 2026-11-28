@@ -115,8 +115,8 @@ export function Select(properties: SelectProperties) {
           <Box
             field
             variant="outlined"
-            color={color ?? (error === undefined ? "middleground" : "error")}
-            state={state ?? (disabled ? "disabled" : "none")}
+            color={color ?? (error === undefined ? "index" : "error")}
+            state={state ?? (disabled ? "disabled" : "index")}
             suffix={<Icon name="chevron-down" className={classNames(styles.chevron, open && styles.open)} />}
             {...look}
             className={styles.field}

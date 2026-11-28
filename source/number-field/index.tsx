@@ -55,7 +55,7 @@ export function NumberField(properties: NumberFieldProperties) {
     <Button
       // On a filled field the buttons are filled too, so their icons take the color's text color.
       variant={variant === "filled" ? "filled" : "transparent"}
-      color={color ?? (error === undefined ? "middleground" : "error")}
+      color={color ?? (error === undefined ? "index" : "error")}
       square
       icon={direction === 1 ? "plus" : "minus"}
       aria-label={direction === 1 ? increaseLabel : decreaseLabel}
@@ -73,8 +73,8 @@ export function NumberField(properties: NumberFieldProperties) {
         <Box
           field
           variant={variant}
-          color={color ?? (error === undefined ? "middleground" : "error")}
-          state={state ?? (disabled ? "disabled" : "none")}
+          color={color ?? (error === undefined ? "index" : "error")}
+          state={state ?? (disabled ? "disabled" : "index")}
           prefix={button(-1)}
           suffix={button(1)}
           {...look}

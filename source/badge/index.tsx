@@ -4,7 +4,7 @@ import type { BadgeProperties } from "@sharadox/graphical-user-interface-web-lib
 import styles from "./index.module.scss";
 
 /**
- * A badge: a short label (a status, a count, "New") sitting in running text. A small filled brand box by default,
+ * A badge: a short label (a status, a count, "New") sitting in running text. A filled index box by default,
  * with every box look, a prefix and a suffix.
  *
  * @example
@@ -15,8 +15,8 @@ export function Badge({ className, ...box }: BadgeProperties) {
     <Box
       as="span"
       variant="filled"
-      color="brand"
-      size="small"
+      color="index"
+      size="medium"
       {...box}
       data-badge=""
       className={classNames(styles.badge, className)}

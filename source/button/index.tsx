@@ -8,7 +8,7 @@ import type { ButtonProperties } from "@sharadox/graphical-user-interface-web-li
 
 /**
  * The button: a `<button>`, or with `href` a link (next/link's `Link`, or the site's own `link`) that looks the same,
- * so the two can never drift apart. Filled in the brand color by default; any variant, color, color style, corner,
+ * so the two can never drift apart. Filled in index by default; any variant, color, color style, corner,
  * line and size (each per breakpoint too), a prefix and a suffix section, or one square icon. While `loading` it
  * shows the spinner, is marked busy and ignores clicks, so an action never runs twice; a set `active` state (the
  * current page, say) ignores them too; disabled, a link loses its address. It is a client component (it handles clicks), so a server page can use it with serializable properties.
@@ -21,7 +21,7 @@ import type { ButtonProperties } from "@sharadox/graphical-user-interface-web-li
 export function Button(properties: ButtonProperties) {
   const {
     variant = "filled",
-    color = "brand",
+    color = "index",
     state,
     loading = false,
     disabled = false,
@@ -31,7 +31,7 @@ export function Button(properties: ButtonProperties) {
     onClick,
     ...rest
   } = properties;
-  const currentState: BoxState = state ?? (disabled ? "disabled" : loading ? "loading" : "none");
+  const currentState: BoxState = state ?? (disabled ? "disabled" : loading ? "loading" : "index");
   // Pressed for good (active), busy or disabled: a click does nothing.
   const ignored = currentState === "active" || currentState === "loading" || currentState === "disabled";
   const click = (event: MouseEvent<HTMLElement>) => {

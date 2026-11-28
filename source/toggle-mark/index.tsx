@@ -19,11 +19,11 @@ export function ToggleMark(properties: ToggleMarkProperties) {
     checked,
     onChange,
     state,
-    color = "brand",
+    color = "index",
     colorStyle,
     corner,
     line,
-    size = "small",
+    size = "medium",
     className,
     ...input
   } = properties;
@@ -47,7 +47,7 @@ export function ToggleMark(properties: ToggleMarkProperties) {
           corner={corner ?? (type === "radio" ? "circle" : undefined)}
           line={line}
           size={size}
-          state={state ?? (input.disabled ? "disabled" : "none")}
+          state={state ?? (input.disabled ? "disabled" : "index")}
           aria-hidden="true"
           className={styles.mark}
         >

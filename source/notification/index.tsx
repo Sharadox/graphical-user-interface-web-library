@@ -60,7 +60,7 @@ function NotificationItem({
       <Button
         square
         variant="transparent"
-        color="middleground"
+        color="index"
         size="small"
         icon="close"
         aria-label={dismissLabel}

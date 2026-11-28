@@ -20,6 +20,8 @@ test("copies the value, says so for two seconds, and tells who asked", async () 
   expect(screen.getByRole("button").getAttribute("data-variant")).toBe("outlined");
   act(() => void vi.advanceTimersByTime(2000));
   expect(screen.getByRole("button").textContent).toBe("Copy");
+  expect(screen.getByRole("button").getAttribute("data-size")).toBe("medium");
+  expect(screen.getByRole("button").getAttribute("data-color")).toBe("index");
   rerender(<CopyButton value="EFGH" label="Copy" copiedLabel="Copied." />);
   await act(async () => fireEvent.click(screen.getByRole("button")));
   expect(writeText).toHaveBeenLastCalledWith("EFGH");

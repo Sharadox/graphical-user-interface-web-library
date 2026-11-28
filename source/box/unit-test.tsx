@@ -81,11 +81,11 @@ test("a square box holds one icon or character, with no padding", () => {
   expect(box.firstElementChild!.getAttribute("data-section")).toBe("content");
 });
 
-test("an interactive box is left to the pointer by default (state none), and any state can be set", () => {
+test("an interactive box is left to the pointer by default (state index), and any state can be set", () => {
   const { container, rerender } = render(<Box interactive>Go</Box>);
   const box = container.firstElementChild!;
   expect(box.getAttribute("data-interactive")).toBe("");
-  expect(box.getAttribute("data-state")).toBe("none");
+  expect(box.getAttribute("data-state")).toBe("index");
   expect(box.firstElementChild!.getAttribute("data-section")).toBe("content");
   rerender(
     <Box interactive state="hover">
@@ -123,7 +123,7 @@ test("a field box holds a form control: marked, interactive, and its sections ap
   const box = container.firstElementChild!;
   expect(box.getAttribute("data-field")).toBe("");
   expect(box.getAttribute("data-interactive")).toBe("");
-  expect(box.getAttribute("data-state")).toBe("none");
+  expect(box.getAttribute("data-state")).toBe("index");
   expect([...box.children].map((section) => section.getAttribute("data-section"))).toEqual(["prefix", "content"]);
 });
 
@@ -144,43 +144,90 @@ test("modifications are listed on the box: none set keeps the default (glass), a
   expect(container.firstElementChild!.getAttribute("data-modifications")).toBe("glass glow");
 });
 
-test("a glow is a layer right after the box, wearing the box's color, color style and start", () => {
+test("a glow is a layer right after the box (outside, by default), wearing the box's color, color style and position", () => {
   const { container } = render(
     <Box
       variant="filled"
       color="red"
       colorStyle="black"
-      glowStart={{ base: "top", 960: "end" }}
+      glowPosition={{ base: "top", 960: "end-start" }}
       modifications={["glow"]}
     >
       Glowing
     </Box>,
   );
   const [box, glow] = [...container.children];
-  expect(box!.getAttribute("data-glow-start")).toBe("top");
-  expect(glow!.getAttribute("data-glow")).toBe("");
+  expect(box!.getAttribute("data-glow-position")).toBe("top");
+  expect(box!.getAttribute("data-glow-boundary")).toBe("outside");
   expect(glow!.getAttribute("aria-hidden")).toBe("true");
   expect(
     Object.fromEntries([...glow!.attributes].filter((a) => a.name.startsWith("data-")).map((a) => [a.name, a.value])),
   ).toEqual({
     "data-glow": "",
+    "data-glow-boundary": "outside",
     "data-color": "red",
     "data-style-color": "black",
-    "data-glow-start": "top",
-    "data-glow-start-960": "end",
+    "data-glow-position": "top",
+    "data-glow-position-960": "end-start",
   });
 });
 
+test("a glow inside the box is its first child, under its sections", () => {
+  const { container } = render(
+    <Box interactive glowBoundary="inside" glowPosition="cursor" modifications={["glow"]} prefix="€">
+      Glowing
+    </Box>,
+  );
+  expect(container.children).toHaveLength(1);
+  const box = container.firstElementChild!;
+  expect(box.getAttribute("data-glow-boundary")).toBe("inside");
+  const [glow, ...sections] = [...box.children];
+  expect(glow!.getAttribute("data-glow")).toBe("");
+  expect(glow!.getAttribute("data-glow-boundary")).toBe("inside");
+  expect(glow!.getAttribute("data-glow-position")).toBe("cursor");
+  expect(sections.map((section) => section.getAttribute("data-section"))).toEqual(["prefix", "content"]);
+});
+
+test("without a glow there is no boundary", () => {
+  const { container } = render(<Box glowBoundary="inside">Plain</Box>);
+  expect(container.firstElementChild!.hasAttribute("data-glow-boundary")).toBe(false);
+});
+
+const css = () =>
+  compile(join(process.cwd(), "source/box/index.module.scss"), { loadPaths: [join(process.cwd(), "source")] }).css;
+
+test("the edge is a border on outlined boxes and padding on the others, around the box and between its sections", () => {
+  const box = css();
+  expect(box).toMatch(
+    /padding: calc\(var\(--box-padding\) \+ var\(--box-edge-thickness\) - var\(--box-border-thickness\)\)/,
+  );
+  expect(box).toMatch(/--section-minimum-size: calc\(var\(--box-minimum-size\) - 2 \* var\(--box-edge-thickness\)\)/);
+  expect(box).toMatch(/--section-edge: calc\(var\(--box-edge-thickness\) - var\(--box-border-thickness\)\)/);
+  expect(box).toMatch(
+    /\[data-section=prefix\]\)[^{]*\{[^}]*border-inline-end: var\(--section-border-thickness\) var\(--line-style\) var\(--section-border-color\);[^}]*padding-inline-end: var\(--section-edge\)/,
+  );
+  expect(box).toMatch(/\[data-section=suffix\]\)[^{]*\{[^}]*border-inline-start: var\(--section-border-thickness\)/);
+});
+
+test("the focus ring is drawn inside the box's edge, in the color its variant chose", () => {
+  const box = css();
+  expect(box).toMatch(
+    /:focus-visible[^{]*\{[^}]*outline: var\(--focus-thickness\) solid var\(--box-focus-color\);[^}]*outline-offset: var\(--focus-offset\)/,
+  );
+  expect(box).toMatch(/:focus-within[^{]*\{[^}]*outline: var\(--focus-thickness\) solid var\(--box-focus-color\)/);
+  expect(box).toMatch(/--glow-paint: var\(--box-glow-paint\)/);
+  // Only a box with a variant decides its titles' color, so the plain boxes inside a card keep the card's.
+  expect(box).toMatch(/\.box\[data-variant\]\) \{\s*--title-color: var\(--box-title-color\)/);
+});
+
 test("the gradient ring reads values the box passes down (its own don't reach its pseudo-element), and loading hides gradient text", () => {
-  const css = compile(join(process.cwd(), "source/box/index.module.scss"), {
-    loadPaths: [join(process.cwd(), "source")],
-  }).css;
-  expect(css).toMatch(/--ring-display: var\(--box-ring-display\)/);
-  expect(css).toMatch(/--ring-paint: var\(--box-border-paint\)/);
-  expect(css).toMatch(/display: var\(--ring-display\)/);
-  expect(css).toMatch(/--ring-thickness: var\(--box-border-thickness\)/);
-  expect(css).toMatch(/inset: calc\(-1 \* var\(--ring-thickness\)\)/);
-  expect(css).toMatch(/border: var\(--ring-thickness\) solid transparent/);
-  expect(css).toMatch(/background: var\(--ring-paint\) border-box/);
-  expect(css).toMatch(/\[data-state=loading\]\)[^{]*\{[^}]*background-image: none, var\(--box-background-image\)/);
+  const sheet = css();
+  expect(sheet).toMatch(/--ring-display: var\(--box-ring-display\)/);
+  expect(sheet).toMatch(/--ring-paint: var\(--box-border-paint\)/);
+  expect(sheet).toMatch(/display: var\(--ring-display\)/);
+  expect(sheet).toMatch(/--ring-thickness: var\(--box-border-thickness\)/);
+  expect(sheet).toMatch(/inset: calc\(-1 \* var\(--ring-thickness\)\)/);
+  expect(sheet).toMatch(/border: var\(--ring-thickness\) solid transparent/);
+  expect(sheet).toMatch(/background: var\(--ring-paint\) border-box/);
+  expect(sheet).toMatch(/\[data-state=loading\]\)[^{]*\{[^}]*background-image: none, var\(--box-background-image\)/);
 });

@@ -15,16 +15,7 @@ const STEPS: Readonly<Record<string, number>> = { ArrowRight: 1, ArrowLeft: -1 }
  * @example
  * <Tabs label="Account" tabs={[{ value: "profile", label: "Profile", content: <Profile /> }, …]} />
  */
-export function Tabs({
-  label,
-  tabs,
-  value,
-  defaultValue,
-  onChange,
-  color = "foreground",
-  size,
-  className,
-}: TabsProperties) {
+export function Tabs({ label, tabs, value, defaultValue, onChange, color = "index", size, className }: TabsProperties) {
   const id = useId();
   const list = useRef<HTMLDivElement>(null);
   const [own, setOwn] = useState(defaultValue ?? tabs[0]!.value);

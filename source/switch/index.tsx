@@ -24,8 +24,8 @@ export function Switch(properties: SwitchProperties) {
     state,
     className,
     corner = "circle",
-    size = "small",
-    color = "brand",
+    size = "medium",
+    color = "index",
     ...look
   } = properties;
   const [own, setOwn] = useState(defaultChecked);
@@ -66,7 +66,7 @@ export function Switch(properties: SwitchProperties) {
         color={color}
         corner={corner}
         size={size}
-        state={state ?? (disabled ? "disabled" : "none")}
+        state={state ?? (disabled ? "disabled" : "index")}
         {...look}
         className={styles.track}
       >
