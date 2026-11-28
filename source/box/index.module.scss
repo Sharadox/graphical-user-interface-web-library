@@ -33,6 +33,7 @@
   // Its gradient ring is a pseudo-element, which the box's own (non-inheriting) values don't reach either.
   --ring-display: var(--box-ring-display);
   --ring-paint: var(--box-border-paint);
+  --ring-thickness: var(--box-border-thickness);
   -webkit-backdrop-filter: var(--box-backdrop);
   backdrop-filter: var(--box-backdrop);
   transition:
@@ -46,8 +47,8 @@
     content: "";
     display: var(--ring-display);
     position: absolute;
-    inset: calc(-1 * var(--box-border-thickness));
-    border: var(--box-border-thickness) solid transparent;
+    inset: calc(-1 * var(--ring-thickness));
+    border: var(--ring-thickness) solid transparent;
     border-radius: inherit;
     background: var(--ring-paint) border-box;
     mask:

@@ -178,6 +178,9 @@ test("the gradient ring reads values the box passes down (its own don't reach it
   expect(css).toMatch(/--ring-display: var\(--box-ring-display\)/);
   expect(css).toMatch(/--ring-paint: var\(--box-border-paint\)/);
   expect(css).toMatch(/display: var\(--ring-display\)/);
+  expect(css).toMatch(/--ring-thickness: var\(--box-border-thickness\)/);
+  expect(css).toMatch(/inset: calc\(-1 \* var\(--ring-thickness\)\)/);
+  expect(css).toMatch(/border: var\(--ring-thickness\) solid transparent/);
   expect(css).toMatch(/background: var\(--ring-paint\) border-box/);
   expect(css).toMatch(/\[data-state=loading\]\)[^{]*\{[^}]*background-image: none, var\(--box-background-image\)/);
 });
