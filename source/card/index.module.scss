@@ -8,7 +8,7 @@
   font-size: var(--scale-16);
   font-weight: 600;
   // A title is in its color's active color (foreground on index).
-  color: var(--current-active-color);
+  color: var(--title-color, var(--current-active-color));
 }
 
 :where(.description) {

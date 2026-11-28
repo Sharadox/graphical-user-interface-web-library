@@ -29,7 +29,7 @@ test("shared values, the scale, sizes, corners and lines sit once on the root", 
       "--breakpoint-640:640px",
       "--transparent-color-rgb-alpha:12.5%",
       "--gradient-angle:90deg",
-      "--glow-size:max(var(--scale-32), calc(50cqw + 50cqh))",
+      "--glow-size:max(var(--scale-64), calc(60cqw + 60cqh))",
       "--line-line-solid:1",
       "--dashed-line-solid:0",
       "--line-solid:var(--line-line-solid)",
@@ -262,6 +262,8 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       // Its focus ring is drawn on its fill; its glow inside it in the text's color.
       "--box-focus-color:var(--current-focus-color)",
       "--box-glow-paint:linear-gradient(var(--current-on-color), var(--current-on-color))",
+      // A title on its fill is in the fill's text color.
+      "--box-title-color:var(--current-on-color)",
     ]),
   );
   // Filled stays as it is on hover, for every color.
@@ -281,6 +283,7 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       "--box-backdrop:blur(var(--glass-blur))",
       "--box-focus-color:var(--focus-color)",
       "--box-glow-paint:var(--current-color-paint)",
+      "--box-title-color:var(--current-active-color)",
       // A gradient color paints its text and its border with the gradient.
       "--box-text-paint:var(--current-color-gradient, none)",
       "--box-text-fill:var(--current-text-fill)",

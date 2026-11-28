@@ -216,6 +216,8 @@ test("the focus ring is drawn inside the box's edge, in the color its variant ch
   );
   expect(box).toMatch(/:focus-within[^{]*\{[^}]*outline: var\(--focus-thickness\) solid var\(--box-focus-color\)/);
   expect(box).toMatch(/--glow-paint: var\(--box-glow-paint\)/);
+  // Only a box with a variant decides its titles' color, so the plain boxes inside a card keep the card's.
+  expect(box).toMatch(/\.box\[data-variant\]\) \{\s*--title-color: var\(--box-title-color\)/);
 });
 
 test("the gradient ring reads values the box passes down (its own don't reach its pseudo-element), and loading hides gradient text", () => {

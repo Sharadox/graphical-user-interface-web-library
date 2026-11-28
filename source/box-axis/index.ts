@@ -32,6 +32,7 @@ export const BOX_INITIAL_VALUES: AxisDeclarations = {
   "box-backdrop": "none",
   "box-focus-color": "currentcolor",
   "box-glow-paint": "none",
+  "box-title-color": "currentcolor",
 };
 
 /**
@@ -45,10 +46,11 @@ const SIZED: AxisDeclarations = {
   "box-minimum-size": "var(--current-minimum-size)",
   "box-edge-thickness": "var(--line-thickness)",
 };
-/** Seen against the page: the page's focus ring, the color's glow. */
+/** Seen against the page: the page's focus ring, the color's glow, titles in the color's active color. */
 const SEE_THROUGH: AxisDeclarations = {
   "box-focus-color": "var(--focus-color)",
   "box-glow-paint": "var(--current-color-paint)",
+  "box-title-color": "var(--current-active-color)",
 };
 const GLASS = "blur(var(--glass-blur))";
 /** Text in the color, painted with its gradient where it has one. */
@@ -108,6 +110,7 @@ export const VARIANT_AXIS: Axis = {
         // Its focus ring and inner glow are drawn on its fill.
         "box-focus-color": "var(--current-focus-color)",
         "box-glow-paint": "linear-gradient(var(--current-on-color), var(--current-on-color))",
+        "box-title-color": "var(--current-on-color)",
         "box-background": "var(--current-background-color)",
         "box-background-image": "var(--current-color-gradient, none)",
         "box-text-color": "var(--current-on-color)",

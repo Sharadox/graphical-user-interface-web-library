@@ -81,6 +81,12 @@
   isolation: isolate;
 }
 
+// A box with a variant decides its titles' color (the plain boxes inside it keep it): its active color, or its text
+// on a fill.
+:where(.box[data-variant]) {
+  --title-color: var(--box-title-color);
+}
+
 :where(.box[data-variant], .box[data-size], .box[data-interactive]) {
   font-size: var(--current-font-size);
 }

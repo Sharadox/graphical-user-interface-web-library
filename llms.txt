@@ -24,7 +24,7 @@
 - /switch: Switch({ label, checked?, defaultChecked?, onChange?(checked) → void | Promise<boolean | void> (false flips back), disabled?, state?, ...look (corner circle, size medium) }) — role switch; "use client"
 - /wrapper: Wrapper(box properties) — inline-size 100%, max 1280 including its padding-inline 16, centered; use it only where content must sit within the page's width (full-width lines stay outside)
 - /skip-link: SkipLink({ label, href? ("#main") }) — the first link in the body, to the main content; hidden until focused by keyboard
-- /card: Card({ title?, headingLevel? (2), description?, action?, children, ...box }) — outlined index article, title in the active color, padding 24, action centered beside the content, wraps under it
+- /card: Card({ title?, headingLevel? (2), description?, action?, children, ...box }) — outlined index article, title in the active color (the fill's text color when filled), padding 24, action centered beside the content, wraps under it
 - /separator: Separator({ orientation? (horizontal | vertical), color? (index), line?, className? }) — <hr> in the color's border color
 - /badge: Badge(box properties) — span, filled index medium, inline
 - /avatar: Avatar({ name, src?, size? (medium), color? (index), corner? (circle), colorStyle?, line?, className? }); initials(name) — img, or initials on a filled box when missing or failing; "use client"

@@ -66,7 +66,7 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
     "gradient-angle": "90deg",
     "glow-range": "var(--scale-128)",
     "glow-overflow": "var(--scale-8)",
-    "glow-size": "max(var(--scale-32), calc(50cqw + 50cqh))",
+    "glow-size": "max(var(--scale-64), calc(60cqw + 60cqh))",
     "glow-opacity": "50%",
     "focus-offset": "calc(-2 * var(--focus-thickness))",
   });

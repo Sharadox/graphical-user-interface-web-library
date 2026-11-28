@@ -43,7 +43,7 @@
   font-size: var(--scale-24);
   font-weight: 600;
   line-height: 1.2;
-  color: var(--current-active-color);
+  color: var(--title-color, var(--current-active-color));
 }
 
 @keyframes rise {

@@ -20,7 +20,7 @@
 - Colors have parts, each another color: `on`, `hover`, `active` (its hover by default), `background` and `border`
   (its background by default). Middleground is a color like any other.
 - `index`: every component's color by default (middleground text turning foreground, on foreground's fill and
-  border); titles are in their color's active color.
+  border); titles are in their color's active color (on a fill, its text color).
 - Filled and transparent boxes have no border: the line's thickness is padding instead, so every variant is the same
   size. Outlined boxes part their sections with a border.
 - The focus ring is drawn inside the box's edge: brand, or foreground on a brand fill, or background on a

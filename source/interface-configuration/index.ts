@@ -118,8 +118,8 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     "gradient-angle": "90deg",
     "glow-range": "var(--scale-128)",
     "glow-overflow": "var(--scale-8)",
-    // Its width, from the box's (its layer is a size container): half the width plus half the height.
-    "glow-size": "max(var(--scale-32), calc(50cqw + 50cqh))",
+    // Its width, from the box's (its layer is a size container): 60% of the width plus 60% of the height.
+    "glow-size": "max(var(--scale-64), calc(60cqw + 60cqh))",
     "glow-opacity": "50%",
     "glow-breathe-duration": "4s",
     "glow-float-duration": "7s",

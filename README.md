@@ -65,7 +65,7 @@ everything below it: on the page, in one part of it, or on one piece.
   any other.
 - **Index**, every component's color by default: middleground text that turns foreground when hovered and pressed,
   on foreground's fill and border (`{ of: "middleground", on: "background", hover: "foreground", background:
-"foreground", border: "foreground" }`). Titles take their color's active color, so foreground on index.
+"foreground", border: "foreground" }`). Titles take their color's active color, so foreground on index, or the fill's text color on a filled box.
 - **Gradient colors** list the colors they pass through: `rainbow` is red, yellow, green, cyan, blue and magenta, in
   the direction of `--gradient-angle` (90deg). Its fill, text (outlined, transparent, inline), hover backgrounds and
   outlined border (on whole lines) are the gradient at each alpha; where one flat color is needed (icons, focus rings,
@@ -90,8 +90,8 @@ everything below it: on the page, in one part of it, or on one piece.
 - **Shared values** sit once on the root: the scale (`--scale-0` … `--scale-128`: 0 4 8 12 14 16 24 32 64 128), the
   breakpoints (640, 960, 1280), sizes, corners, lines, timings (`--quick-duration` 0.1s, `--duration` 0.25s), the
   glass blur, font weights, the wrapper (1280 wide with its 16 a side inside), the focus ring (`--focus-thickness` 2,
-  `--focus-offset` twice that inside), the glow (`--glow-range` 128, `--glow-overflow` 8, `--glow-size` half the
-  box's width plus half its height, at least 32, `--glow-opacity` 50%, `--glow-breathe-duration` 4s,
+  `--focus-offset` twice that inside), the glow (`--glow-range` 128, `--glow-overflow` 8, `--glow-size` 60% of the
+  box's width plus 60% of its height, at least 64, `--glow-opacity` 50%, `--glow-breathe-duration` 4s,
   `--glow-float-duration` 7s, `--glow-press-scale` 1.35).
 - **Per breakpoint:** every attribute has a version per breakpoint, mobile first (`data-color-960="blue"`), set by any
   property given as `{ base: "red", 960: "blue" }`.

@@ -46,11 +46,13 @@ test("a chosen heading level, look and element; nothing empty is drawn", () => {
   expect(container.textContent).toBe("Only content");
 });
 
-test("titles are in their color's active color (foreground on index), the card, dialog and accordion alike", () => {
+test("titles are in their color's active color (foreground on index), or its text on a fill: card, dialog, accordion", () => {
   const compiled = (name: string) =>
     compile(join(process.cwd(), `source/${name}/index.module.scss`), { loadPaths: [join(process.cwd(), "source")] })
       .css;
-  expect(compiled("card")).toMatch(/\.title\)? ?\{[^}]*color: var\(--current-active-color\)/);
-  expect(compiled("dialog")).toMatch(/\.title\)? ?\{[^}]*color: var\(--current-active-color\)/);
-  expect(compiled("accordion")).toMatch(/\.button\)? ?\{[^}]*color: var\(--current-active-color\)/);
+  expect(compiled("card")).toMatch(/\.title\)? ?\{[^}]*color: var\(--title-color, var\(--current-active-color\)\)/);
+  expect(compiled("dialog")).toMatch(/\.title\)? ?\{[^}]*color: var\(--title-color, var\(--current-active-color\)\)/);
+  expect(compiled("accordion")).toMatch(
+    /\.button\)? ?\{[^}]*color: var\(--title-color, var\(--current-active-color\)\)/,
+  );
 });

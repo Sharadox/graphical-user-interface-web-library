@@ -14,7 +14,7 @@
   border: 0;
   background: none;
   // A title, in its color's active color.
-  color: var(--current-active-color);
+  color: var(--title-color, var(--current-active-color));
   font: inherit;
   font-weight: var(--interactive-font-weight);
   text-align: start;
