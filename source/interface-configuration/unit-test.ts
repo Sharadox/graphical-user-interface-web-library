@@ -62,7 +62,7 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
     "gradient-angle": "90deg",
     "glow-range": "var(--scale-128)",
     "glow-spread": "var(--scale-32)",
-    "glow-radius": "var(--scale-64)",
+    "glow-radius": "var(--glow-spread)",
     "glow-opacity": "50%",
   });
 });

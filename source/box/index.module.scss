@@ -30,6 +30,9 @@
   // The box's own values don't pass down (they are registered without inheritance); its sections take these.
   --section-padding: var(--box-section-padding);
   --section-minimum-size: calc(var(--box-minimum-size) - 2 * var(--box-border-thickness));
+  // Its gradient ring is a pseudo-element, which the box's own (non-inheriting) values don't reach either.
+  --ring-display: var(--box-ring-display);
+  --ring-paint: var(--box-border-paint);
   -webkit-backdrop-filter: var(--box-backdrop);
   backdrop-filter: var(--box-backdrop);
   transition:
@@ -41,12 +44,12 @@
   // A gradient color's border: a ring of its transparent gradient over the border, drawn only where one is needed.
   &::after {
     content: "";
-    display: var(--box-ring-display);
+    display: var(--ring-display);
     position: absolute;
     inset: calc(-1 * var(--box-border-thickness));
     border: var(--box-border-thickness) solid transparent;
     border-radius: inherit;
-    background: var(--box-border-paint) border-box;
+    background: var(--ring-paint) border-box;
     mask:
       linear-gradient(#000 0 0) padding-box exclude,
       linear-gradient(#000 0 0);
@@ -155,6 +158,11 @@
 // While loading, the content keeps its size (and its name for screen readers) under the spinner.
 :where(.box[data-state="loading"]) > :where(.content, .section) {
   opacity: 0;
+}
+
+// A gradient color's text is painted by the box itself, so it hides too.
+:where(.box[data-state="loading"]) {
+  background-image: none, var(--box-background-image);
 }
 
 :where(.spinner) {

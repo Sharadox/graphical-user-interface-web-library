@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, test } from "vitest";
 
@@ -167,4 +169,15 @@ test("a glow is a layer right after the box, wearing the box's color, color styl
     "data-glow-start": "top",
     "data-glow-start-960": "end",
   });
+});
+
+test("the gradient ring reads values the box passes down (its own don't reach its pseudo-element), and loading hides gradient text", () => {
+  const css = compile(join(process.cwd(), "source/box/index.module.scss"), {
+    loadPaths: [join(process.cwd(), "source")],
+  }).css;
+  expect(css).toMatch(/--ring-display: var\(--box-ring-display\)/);
+  expect(css).toMatch(/--ring-paint: var\(--box-border-paint\)/);
+  expect(css).toMatch(/display: var\(--ring-display\)/);
+  expect(css).toMatch(/background: var\(--ring-paint\) border-box/);
+  expect(css).toMatch(/\[data-state=loading\]\)[^{]*\{[^}]*background-image: none, var\(--box-background-image\)/);
 });

@@ -78,7 +78,7 @@ everything below it: on the page, in one part of it, or on one piece.
 - **Shared values** sit once on the root: the scale (`--scale-0` … `--scale-128`: 0 4 8 12 14 16 24 32 64 128), the
   breakpoints (640, 960, 1280), sizes, corners, lines, timings (`--quick-duration` 0.1s, `--duration` 0.25s), the
   glass blur, font weights, the wrapper (1280 wide with its 16 a side inside), the glow (`--glow-start-angle`
-  90deg, `--glow-range` 128, `--glow-spread` 32, `--glow-radius` 64, `--glow-opacity` 50%).
+  90deg, `--glow-range` 128, `--glow-spread` 32, `--glow-radius` (the spread), `--glow-opacity` 50%).
 - **Per breakpoint:** every attribute has a version per breakpoint, mobile first (`data-color-960="blue"`), set by any
   property given as `{ base: "red", 960: "blue" }`.
 
