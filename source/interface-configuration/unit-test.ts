@@ -17,6 +17,13 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
     rgb: { white: "94 94 94", black: "161 161 161" },
     transparent: "foreground",
     hover: "foreground",
+    filledHover: "foreground",
+  });
+  // The rainbow paints with the six hues; its flat color (icons, focus rings, dashed borders) is foreground's.
+  expect(DEFAULT_INTERFACE.colors.rainbow).toEqual({
+    of: "foreground",
+    on: "foreground",
+    gradient: ["red", "yellow", "green", "cyan", "blue", "magenta"],
   });
   expect(DEFAULT_INTERFACE.colors.foreground).toEqual({ of: { white: "black", black: "white" }, on: "background" });
   expect(DEFAULT_INTERFACE.colors.background).toEqual({ of: { white: "white", black: "black" } });
@@ -43,7 +50,7 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
   expect(DEFAULT_INTERFACE.sizes.large).toMatchObject({ "minimum-size": "48px", "font-size": "var(--scale-16)" });
   expect(DEFAULT_INTERFACE.values).toMatchObject({
     "color-rgb-alpha": "100%",
-    "transparent-color-rgb-alpha": "10%",
+    "transparent-color-rgb-alpha": "12.5%",
     "transparent-hover-color-rgb-alpha": "var(--transparent-color-rgb-alpha)",
     "transparent-active-color-rgb-alpha": "var(--transparent-hover-color-rgb-alpha)",
     "disabled-opacity": "50%",
@@ -52,6 +59,11 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
     duration: "0.25s",
     "wrapper-width": "1280px",
     "wrapper-padding": "var(--scale-16)",
+    "gradient-angle": "90deg",
+    "glow-range": "var(--scale-128)",
+    "glow-spread": "var(--scale-32)",
+    "glow-radius": "var(--glow-spread)",
+    "glow-opacity": "50%",
   });
 });
 
@@ -100,6 +112,12 @@ test("refuses a configuration that points nowhere", () => {
   expect(() => defineInterface({ defaultCornerStyle: "oval" })).toThrow('no corner style "oval"');
   expect(() => defineInterface({ defaultLineStyle: "wavy" })).toThrow('no line style "wavy"');
   expect(() => defineInterface({ defaultSize: "huge" })).toThrow('no size "huge"');
+  expect(() => defineInterface({ colors: { gold: { of: "white", gradient: ["white", "silver"] } } })).toThrow(
+    'color "gold" refers to "silver"',
+  );
+  expect(() => defineInterface({ colors: { gold: { of: "white", filledHover: "silver" } } })).toThrow(
+    'color "gold" refers to "silver"',
+  );
   expect(() => defineInterface({ colors: { "Gold Leaf": { of: "white" } } })).toThrow(
     '"Gold Leaf" is not a kebab-case name',
   );

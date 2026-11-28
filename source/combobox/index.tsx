@@ -123,7 +123,7 @@ export function Combobox(properties: ComboboxProperties) {
             field
             variant="outlined"
             color={color ?? (error === undefined ? "middleground" : "error")}
-            state={state ?? (disabled ? "disabled" : "enabled")}
+            state={state ?? (disabled ? "disabled" : "none")}
             suffix={<Icon name="chevron-down" />}
             {...look}
           >

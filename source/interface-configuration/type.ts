@@ -10,14 +10,19 @@ export type PerColorStyle = Readonly<Record<string, string>>;
  */
 export interface ConstantColor {
   rgb: PerColorStyle;
-  /** A gradient that paints the color's fills in each color style (`linear-gradient(…)`); flat by default. */
-  gradient?: PerColorStyle;
+  /**
+   * The colors a gradient paints the color with, in order (`["red", "yellow", …]`): its fills, its text and its
+   * borders, each at the color's own alphas, in the direction of `--gradient-angle`. Flat without one.
+   */
+  gradient?: readonly string[];
   /** The color of text placed on a fill of this color; `foreground` by default. */
   on?: string;
   /** The color whose channels its transparent color (hover backgrounds, borders) uses; itself by default. */
   transparent?: string;
   /** The color its text turns on hover (outlined, transparent, inline); itself by default. */
   hover?: string;
+  /** The color its fill turns on hover (filled), with that color's text; itself by default. */
+  filledHover?: string;
 }
 
 /**
@@ -29,6 +34,9 @@ export interface ColorReference {
   on?: string;
   transparent?: string;
   hover?: string;
+  filledHover?: string;
+  /** Its own gradient (the rainbow is foreground, painted with the six hues); the referred color's otherwise. */
+  gradient?: readonly string[];
 }
 
 /** A color, constant or a reference to another. */

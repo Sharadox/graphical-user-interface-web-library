@@ -19,7 +19,7 @@ const interactiveSize = (minimum: string, font: string) => ({
 
 /**
  * The generic interface: white and black color styles (and `inherit`), the constant colors with their RGB channels,
- * the colors that refer to them, three corner styles, three line styles, the scale, the breakpoints, three
+ * the colors that refer to them (and the rainbow, painted with the six hues), three corner styles, three line styles, the scale, the breakpoints, three
  * interactive sizes and every shared value, each pointing to its source.
  */
 export const DEFAULT_INTERFACE: InterfaceConfiguration = {
@@ -36,13 +36,19 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     magenta: { rgb: { white: "192 38 211", black: "255 0 255" } },
     yellow: { rgb: { white: "202 138 4", black: "255 214 10" } },
     foreground: { of: { white: "black", black: "white" }, on: "background" },
-    middleground: { rgb: { white: "94 94 94", black: "161 161 161" }, transparent: "foreground", hover: "foreground" },
+    middleground: {
+      rgb: { white: "94 94 94", black: "161 161 161" },
+      transparent: "foreground",
+      hover: "foreground",
+      filledHover: "foreground",
+    },
     background: { of: { white: "white", black: "black" } },
     brand: { of: "foreground", on: "background" },
     information: { of: "blue" },
     success: { of: "green" },
     warn: { of: "yellow" },
     error: { of: "red" },
+    rainbow: { of: "foreground", on: "foreground", gradient: ["red", "yellow", "green", "cyan", "blue", "magenta"] },
   },
   cornerStyles: { square: "0px", "rounded-square": "4px", circle: "10000px" },
   defaultCornerStyle: "rounded-square",
@@ -58,7 +64,7 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
   defaultSize: "medium",
   values: {
     "color-rgb-alpha": "100%",
-    "transparent-color-rgb-alpha": "10%",
+    "transparent-color-rgb-alpha": "12.5%",
     "transparent-hover-color-rgb-alpha": "var(--transparent-color-rgb-alpha)",
     "transparent-active-color-rgb-alpha": "var(--transparent-hover-color-rgb-alpha)",
     "disabled-opacity": "50%",
@@ -76,6 +82,12 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     "wrapper-width": "1280px",
     "wrapper-padding": "var(--scale-16)",
     "spinner-duration": "0.8s",
+    "gradient-angle": "90deg",
+    "glow-start-angle": "90deg",
+    "glow-range": "var(--scale-128)",
+    "glow-spread": "var(--scale-32)",
+    "glow-radius": "var(--glow-spread)",
+    "glow-opacity": "50%",
   },
 };
 
@@ -88,7 +100,9 @@ const KEBAB_CASE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
 /** Every color a color refers to in each color style, for checks. */
 function referencesOf(color: ColorDefinition, styles: string[]): string[] {
-  const own = [color.on, color.transparent, color.hover].filter((name): name is string => name !== undefined);
+  const own = [color.on, color.transparent, color.hover, color.filledHover, ...(color.gradient ?? [])].filter(
+    (name): name is string => name !== undefined,
+  );
   if (!isReference(color)) return own;
   return [...own, ...(typeof color.of === "string" ? [color.of] : styles.map((style) => color.of[style as never]!))];
 }

@@ -2,6 +2,7 @@ import { classNames } from "@sharadox/web-library/class-name";
 import { responsiveAttributes } from "@sharadox/graphical-user-interface-web-library/responsive";
 import type { Responsive } from "@sharadox/graphical-user-interface-web-library/responsive/type";
 import { Spinner } from "@sharadox/graphical-user-interface-web-library/spinner";
+import { GlowLayer } from "@sharadox/graphical-user-interface-web-library/glow-layer";
 import type { BoxLook, BoxProperties } from "@sharadox/graphical-user-interface-web-library/box/type";
 import styles from "./index.module.scss";
 
@@ -20,6 +21,7 @@ const LOOK_ATTRIBUTES: ReadonlyArray<[keyof BoxLook, string]> = [
   ["wrap", "data-wrap"],
   ["gap", "data-gap"],
   ["padding", "data-padding"],
+  ["glowStart", "data-glow-start"],
 ];
 
 /** The attributes for a set of looks, each for every width or per breakpoint. */
@@ -36,13 +38,25 @@ export function lookAttributes(look: BoxLook): Record<string, string> {
  * The base of every piece: a flex box, centered on both axes and in its text unless told otherwise, wearing any
  * variant, color, color style, corner, line and size, each for every width or per breakpoint, with an optional
  * prefix and suffix section (at least square). An interactive box adds the hover and pressed looks, a pointer cursor
- * and its states; while loading, the spinner covers its content, which keeps its size and its name.
+ * and its states; while loading, the spinner covers its content, which keeps its size and its name. Modifications add
+ * to any look: glass (the default) and a glow that turns toward the pointer.
  *
  * @example
  * <Box variant="outlined" color="brand" padding={16} direction={{ base: "top-to-bottom", 960: "left-to-right" }}>…</Box>
  */
 export function Box(properties: BoxProperties) {
-  const { as: Element = "div", prefix, suffix, square, field, state, className, children, ...rest } = properties;
+  const {
+    as: Element = "div",
+    prefix,
+    suffix,
+    square,
+    field,
+    state,
+    modifications,
+    className,
+    children,
+    ...rest
+  } = properties;
   const interactive = properties.interactive || field;
   const look: BoxLook = {};
   const element: Record<string, unknown> = {};
@@ -52,14 +66,15 @@ export function Box(properties: BoxProperties) {
     else element[key] = value;
   }
   const sectioned = prefix !== undefined || suffix !== undefined || square || interactive;
-  const currentState = interactive ? (state ?? "enabled") : undefined;
-  return (
+  const currentState = interactive ? (state ?? "none") : undefined;
+  const box = (
     <Element
       {...element}
       className={classNames(styles.box, className)}
       {...lookAttributes(look)}
       {...(square && { "data-square": "" })}
       {...(field && { "data-field": "" })}
+      {...(modifications && { "data-modifications": modifications.join(" ") })}
       {...(interactive && { "data-interactive": "", "data-state": currentState })}
       {...(currentState === "disabled" && { "aria-disabled": "true" })}
       {...(currentState === "loading" && { "aria-busy": "true" })}
@@ -85,5 +100,13 @@ export function Box(properties: BoxProperties) {
         children
       )}
     </Element>
+  );
+  if (!modifications?.includes("glow")) return box;
+  const { color, colorStyle, glowStart } = look;
+  return (
+    <>
+      {box}
+      <GlowLayer attributes={lookAttributes({ color, colorStyle, glowStart })} />
+    </>
   );
 }

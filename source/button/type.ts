@@ -10,7 +10,10 @@ export interface ButtonLinkProperties extends Omit<AnchorHTMLAttributes<HTMLAnch
 
 /** What every button shares, a link or not. */
 interface ButtonLook extends Omit<BoxLook, "direction" | "justify" | "align" | "textAlign" | "gap" | "padding"> {
-  /** Forces a state (for the design system); otherwise it follows the pointer, `disabled` and `loading`. */
+  /**
+   * Sets a state that stays (`none`, the default, follows the pointer, `disabled` and `loading`); `active`,
+   * `loading` and `disabled` ignore clicks.
+   */
   state?: BoxState;
   /** Shows the spinner instead of the words and ignores clicks while an action runs. */
   loading?: boolean;

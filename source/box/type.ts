@@ -9,8 +9,16 @@ export type BoxAlign = "start" | "center" | "end" | "stretch" | "baseline";
 export type BoxTextAlign = "start" | "center" | "end" | "left" | "right";
 /** A step of the scale, in pixels. */
 export type ScaleStep = 0 | 4 | 8 | 12 | 14 | 16 | 24 | 32 | 64 | 128;
-/** An interactive box's state; forcing one shows it without the pointer (for the design system's pages). */
-export type BoxState = "enabled" | "hover" | "active" | "loading" | "disabled";
+/**
+ * An interactive box's state. `none` (the default) leaves it to the pointer: it turns when hovered and pressed. Any
+ * other is set and stays: `enabled` at rest, `hover` hovered, `active` and `loading` pressed (with the default
+ * cursor), `disabled` faded.
+ */
+export type BoxState = "none" | "enabled" | "hover" | "active" | "loading" | "disabled";
+/** What a box can add to its look: `glass` (the default) blurs what is behind it, `glow` lights it from around. */
+export type BoxModification = "glass" | "glow";
+/** Where a glow rests until the pointer comes near. */
+export type GlowStart = "top" | "end" | "bottom" | "start";
 
 /** Every look a box can take, each for every width or per breakpoint. */
 export interface BoxLook {
@@ -33,6 +41,8 @@ export interface BoxLook {
   wrap?: Responsive<"wrap" | "nowrap">;
   gap?: Responsive<ScaleStep>;
   padding?: Responsive<ScaleStep>;
+  /** Where a glow rests until the pointer comes near (`bottom` by default). */
+  glowStart?: Responsive<GlowStart>;
 }
 
 export interface BoxProperties extends BoxLook, Omit<HTMLAttributes<HTMLElement>, "color" | "prefix"> {
@@ -51,8 +61,13 @@ export interface BoxProperties extends BoxLook, Omit<HTMLAttributes<HTMLElement>
    * ring while anything inside has focus, and a line between its sections.
    */
   field?: boolean;
-  /** An interactive box's state (`enabled` by default). */
+  /** An interactive box's state (`none` by default: it follows the pointer). */
   state?: BoxState;
+  /**
+   * What the box adds to its look, any together: `glass` blurs what is behind a see-through box, `glow` lights it
+   * from around, turning toward the pointer. Without a list, glass; an empty list, nothing.
+   */
+  modifications?: readonly BoxModification[];
   /** Anything else the element takes (`href`, `type`, `disabled`…). */
   [attribute: string]: unknown;
 }

@@ -74,7 +74,7 @@ export function NumberField(properties: NumberFieldProperties) {
           field
           variant={variant}
           color={color ?? (error === undefined ? "middleground" : "error")}
-          state={state ?? (disabled ? "disabled" : "enabled")}
+          state={state ?? (disabled ? "disabled" : "none")}
           prefix={button(-1)}
           suffix={button(1)}
           {...look}

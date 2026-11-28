@@ -4,8 +4,9 @@ import type { WrapperProperties } from "@sharadox/graphical-user-interface-web-l
 import styles from "./index.module.scss";
 
 /**
- * The page's width: a box as wide as its container up to `--wrapper-width` (1280), centered, with
- * `--wrapper-padding` (16) on each side, so content never touches the screen's edges. Any element and box look.
+ * The page's width: a box as wide as its container up to `--wrapper-width` (1280, its padding included), centered,
+ * with `--wrapper-padding` (16) inside on each side, so content never touches the screen's edges. Any element and
+ * box look.
  *
  * @example
  * <Wrapper as="main" direction="top-to-bottom" gap={64}>…</Wrapper>
