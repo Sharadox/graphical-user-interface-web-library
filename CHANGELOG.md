@@ -14,14 +14,25 @@
 - A button's forced `disabled` state looks disabled and refuses clicks but stays focusable; only `disabled` makes it
   natively disabled.
 - Every module style sheet is tested to compile as a pure CSS module, as Next.js needs.
-- States: `none` (the default) follows the pointer; any other state is set and stays (`enabled` never turns on
+- States: `index` (the default) follows the pointer; any other state is set and stays (`enabled` never turns on
   hover). `active` and `loading` look pressed with the default cursor, and a button ignores clicks in them.
-- Transparent colors at 12.5%. Middleground's fill turns foreground when hovered (`filledHover`).
+- Transparent colors at 12.5%.
+- Colors have parts, each another color: `on`, `hover`, `active` (its hover by default), `background` and `border`
+  (its background by default). Middleground is a color like any other.
+- `index`: every component's color by default (middleground text turning foreground, on foreground's fill and
+  border); titles are in their color's active color.
+- Filled and transparent boxes have no border: the line's thickness is padding instead, so every variant is the same
+  size. Outlined boxes part their sections with a border.
+- The focus ring is drawn inside the box's edge: brand, or foreground on a brand fill, or background on a
+  foreground fill. `SkipLink`: the first link, to the main content, shown only to the keyboard.
+- Every component's default size is medium.
 - Gradient colors (`gradient: ["red", …]`, at every alpha) and `rainbow`: the six hues on fills, text, hover
   backgrounds and outlined borders.
-- Modifications (`modifications={["glass", "glow"]}`): glass, the default, and a glow that turns toward the pointer
-  (`glowStart`), from `@sharadox/pointer-web-library`'s `followPointerAngle`.
-- The wrapper's 1280 includes its padding.
+- Positions: every physical and logical place on a box, and a brand's own (`positions`).
+- Modifications (`modifications={["glass", "glow"]}`): glass, the default, and a glow that breathes, floats, rests at
+  `glowPosition` (or follows the pointer at `cursor`), glides toward the pointer and swells while pressed, outside
+  the box or inside it (`glowBoundary`), from `@sharadox/pointer-web-library`'s `followPointerPosition`.
+- The wrapper's 1280 includes its padding. The navigation bar spans the screen, its content in a wrapper.
 
 ## 0.1.0
 

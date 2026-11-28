@@ -3,12 +3,39 @@ import type {
   ColorReference,
   InterfaceConfiguration,
   InterfaceOverrides,
+  Position,
 } from "@sharadox/graphical-user-interface-web-library/interface-configuration/type";
 
 /** The color style that follows the device's light or dark preference. */
 export const INHERIT_COLOR_STYLE = "inherit";
 
 const both = (rgb: string) => ({ white: rgb, black: rgb });
+
+/** The position `cursor` is taken: a glow there follows the pointer and rests hidden. */
+export const CURSOR_POSITION = "cursor";
+
+/** Every physical place on a box, then every logical one (start and end follow the reading direction). */
+const POSITIONS: Readonly<Record<string, Position>> = {
+  center: { x: 0.5, y: 0.5 },
+  top: { x: 0.5, y: 0 },
+  bottom: { x: 0.5, y: 1 },
+  left: { x: 0, y: 0.5 },
+  right: { x: 1, y: 0.5 },
+  "top-left": { x: 0, y: 0 },
+  "top-right": { x: 1, y: 0 },
+  "bottom-left": { x: 0, y: 1 },
+  "bottom-right": { x: 1, y: 1 },
+  start: { inline: 0, y: 0.5 },
+  end: { inline: 1, y: 0.5 },
+  "start-start": { inline: 0, y: 0 },
+  "start-end": { inline: 1, y: 0 },
+  "end-start": { inline: 0, y: 1 },
+  "end-end": { inline: 1, y: 1 },
+  "top-start": { inline: 0, y: 0 },
+  "top-end": { inline: 1, y: 0 },
+  "bottom-start": { inline: 0, y: 1 },
+  "bottom-end": { inline: 1, y: 1 },
+};
 const interactiveSize = (minimum: string, font: string) => ({
   "minimum-size": minimum,
   "font-size": font,
@@ -19,8 +46,9 @@ const interactiveSize = (minimum: string, font: string) => ({
 
 /**
  * The generic interface: white and black color styles (and `inherit`), the constant colors with their RGB channels,
- * the colors that refer to them (and the rainbow, painted with the six hues), three corner styles, three line styles, the scale, the breakpoints, three
- * interactive sizes and every shared value, each pointing to its source.
+ * the colors that refer to them (index, every component's color; the rainbow, painted with the six hues), three corner
+ * styles, three line styles, the scale, the breakpoints, three interactive sizes, every position and every shared
+ * value, each pointing to its source.
  */
 export const DEFAULT_INTERFACE: InterfaceConfiguration = {
   colorStyles: { white: { scheme: "light" }, black: { scheme: "dark" } },
@@ -36,18 +64,20 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     magenta: { rgb: { white: "192 38 211", black: "255 0 255" } },
     yellow: { rgb: { white: "202 138 4", black: "255 214 10" } },
     foreground: { of: { white: "black", black: "white" }, on: "background" },
-    middleground: {
-      rgb: { white: "94 94 94", black: "161 161 161" },
-      transparent: "foreground",
-      hover: "foreground",
-      filledHover: "foreground",
-    },
+    middleground: { rgb: { white: "94 94 94", black: "161 161 161" } },
     background: { of: { white: "white", black: "black" } },
     brand: { of: "foreground", on: "background" },
     information: { of: "blue" },
     success: { of: "green" },
     warn: { of: "yellow" },
     error: { of: "red" },
+    index: {
+      of: "middleground",
+      on: "background",
+      hover: "foreground",
+      background: "foreground",
+      border: "foreground",
+    },
     rainbow: { of: "foreground", on: "foreground", gradient: ["red", "yellow", "green", "cyan", "blue", "magenta"] },
   },
   cornerStyles: { square: "0px", "rounded-square": "4px", circle: "10000px" },
@@ -62,6 +92,8 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     large: interactiveSize("48px", "var(--scale-16)"),
   },
   defaultSize: "medium",
+  positions: POSITIONS,
+  defaultGlowPosition: "bottom",
   values: {
     "color-rgb-alpha": "100%",
     "transparent-color-rgb-alpha": "12.5%",
@@ -70,7 +102,8 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     "disabled-opacity": "50%",
     "line-thickness": "1px",
     "focus-thickness": "2px",
-    "focus-offset": "var(--scale-4)",
+    // Inside the box's edge, so it is seen against the box's own fill.
+    "focus-offset": "calc(-2 * var(--focus-thickness))",
     "quick-duration": "0.1s",
     duration: "0.25s",
     easing: "cubic-bezier(0.22, 1, 0.36, 1)",
@@ -83,11 +116,14 @@ export const DEFAULT_INTERFACE: InterfaceConfiguration = {
     "wrapper-padding": "var(--scale-16)",
     "spinner-duration": "0.8s",
     "gradient-angle": "90deg",
-    "glow-start-angle": "90deg",
     "glow-range": "var(--scale-128)",
-    "glow-spread": "var(--scale-32)",
-    "glow-radius": "var(--glow-spread)",
+    "glow-overflow": "var(--scale-8)",
+    // Its width, from the box's (its layer is a size container): half the width plus half the height.
+    "glow-size": "max(var(--scale-32), calc(50cqw + 50cqh))",
     "glow-opacity": "50%",
+    "glow-breathe-duration": "4s",
+    "glow-float-duration": "7s",
+    "glow-press-scale": "1.35",
   },
 };
 
@@ -100,7 +136,7 @@ const KEBAB_CASE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
 /** Every color a color refers to in each color style, for checks. */
 function referencesOf(color: ColorDefinition, styles: string[]): string[] {
-  const own = [color.on, color.transparent, color.hover, color.filledHover, ...(color.gradient ?? [])].filter(
+  const own = [color.on, color.hover, color.active, color.background, color.border, ...(color.gradient ?? [])].filter(
     (name): name is string => name !== undefined,
   );
   if (!isReference(color)) return own;
@@ -147,6 +183,9 @@ function check(configuration: InterfaceConfiguration): InterfaceConfiguration {
     ["size", configuration.sizes, configuration.defaultSize],
   ] as const;
   for (const [kind, options, chosen] of named) if (!(chosen in options)) throw new Error(`no ${kind} "${chosen}"`);
+  if (CURSOR_POSITION in configuration.positions) throw new Error(`"${CURSOR_POSITION}" is not a position name`);
+  if (!(configuration.defaultGlowPosition in configuration.positions))
+    throw new Error(`no position "${configuration.defaultGlowPosition}"`);
   return configuration;
 }
 
@@ -173,6 +212,7 @@ export function defineInterface(overrides: InterfaceOverrides = {}): InterfaceCo
     cornerStyles: { ...base.cornerStyles, ...overrides.cornerStyles },
     lineStyles: { ...base.lineStyles, ...overrides.lineStyles },
     sizes,
+    positions: { ...base.positions, ...overrides.positions },
     values: { ...base.values, ...overrides.values },
   });
 }

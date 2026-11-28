@@ -2,15 +2,19 @@ import {
   INHERIT_COLOR_STYLE,
   isReference,
 } from "@sharadox/graphical-user-interface-web-library/interface-configuration";
-import { BOX_INITIAL_VALUES, boxAxes } from "@sharadox/graphical-user-interface-web-library/box-axis";
+import { BOX_INITIAL_VALUES, boxAxes, glowPosition } from "@sharadox/graphical-user-interface-web-library/box-axis";
 import type { Axis, AxisDeclarations } from "@sharadox/graphical-user-interface-web-library/box-axis/type";
 import type {
   ColorDefinition,
   InterfaceConfiguration,
 } from "@sharadox/graphical-user-interface-web-library/interface-configuration/type";
 
-/** The parts of a color that a reference takes from the color it points to, unless it sets them itself. */
-const PARTS = ["transparent", "on", "hover"] as const;
+/**
+ * The parts of a color: its text on a fill, its text hovered and pressed, its fill (and tint), its border. A reference
+ * takes each from the color it points to, unless it sets it (or the part it follows: pressed follows hovered, the
+ * border the fill).
+ */
+const PARTS = ["on", "hover", "active", "background", "border"] as const;
 type Part = (typeof PARTS)[number];
 /** What a gradient gives a color, each taken whole by a reference without its own gradient. */
 const GRADIENT_VALUES = [
@@ -23,8 +27,8 @@ const GRADIENT_VALUES = [
   "text-fill",
   "text-clip",
 ] as const;
-/** The values of the fill a color turns on hover: its channels, its text's and its gradient. */
-const FILLED_HOVER_VALUES = ["filled-hover-color-rgb", "filled-hover-on-color-rgb", "filled-hover-color-gradient"];
+/** The part a part follows when a color doesn't set it. */
+const FOLLOWS: Partial<Record<Part, Part>> = { active: "hover", border: "background" };
 
 type Declarations = string[];
 const block = (selector: string, declarations: Declarations) => `${selector}{${declarations.join(";")}}`;
@@ -34,27 +38,15 @@ const select = (name: string, value: string, breakpoint?: number) => `[${attribu
 const take = (name: string, target: string, values: readonly string[]) =>
   values.map((value) => `--${name}-${value}:var(--${target}-${value})`);
 
-/** The source of a color's part (`on`, `transparent`, `hover`) when the color itself names it. */
+/** The source of a color's part when the color decides it: the color it names, the part it follows, or a default. */
 function ownPart(name: string, color: ColorDefinition, part: Part): string | undefined {
   const chosen = color[part];
   if (chosen) return `--${name}-${part}-color-rgb:var(--${chosen}-color-rgb)`;
+  const follows = FOLLOWS[part];
+  if (follows && (!isReference(color) || color[follows]))
+    return `--${name}-${part}-color-rgb:var(--${name}-${follows}-color-rgb)`;
   if (isReference(color)) return undefined;
-  const fallback = { on: "foreground", transparent: name, hover: name }[part];
-  return `--${name}-${part}-color-rgb:var(--${fallback}-color-rgb)`;
-}
-
-/**
- * The fill a color turns on hover, when the color decides it: the one it names, or itself (a constant color, or a
- * reference painted with its own gradient); a plain reference takes its color's.
- */
-function ownFilledHover(name: string, color: ColorDefinition): Declarations {
-  const chosen = color.filledHover ?? (!isReference(color) || color.gradient ? name : undefined);
-  if (!chosen) return [];
-  return [
-    `--${name}-filled-hover-color-rgb:var(--${chosen}-color-rgb)`,
-    `--${name}-filled-hover-on-color-rgb:var(--${chosen}-on-color-rgb)`,
-    `--${name}-filled-hover-color-gradient:var(--${chosen}-color-gradient)`,
-  ];
+  return `--${name}-${part}-color-rgb:var(--${part === "on" ? "foreground" : name}-color-rgb)`;
 }
 
 /** A gradient through the colors at one of the color's alphas. */
@@ -96,11 +88,34 @@ function referenceDeclarations(name: string, color: ColorDefinition, target: str
   return [
     `--${name}-color-rgb:var(--${target}-color-rgb)`,
     ...(color.gradient ? [] : take(name, target, GRADIENT_VALUES)),
-    ...PARTS.filter((part) => !color[part]).map(
+    ...PARTS.filter((part) => ownPart(name, color, part) === undefined).map(
       (part) => `--${name}-${part}-color-rgb:var(--${target}-${part}-color-rgb)`,
     ),
-    ...(color.filledHover || color.gradient ? [] : take(name, target, FILLED_HOVER_VALUES)),
   ];
+}
+
+/** The constant color a color is in one color style, following its references. */
+function constantOf(configuration: InterfaceConfiguration, name: string, style: string): string {
+  const color = configuration.colors[name]!;
+  if (!isReference(color)) return color.rgb[style]!;
+  return constantOf(configuration, typeof color.of === "string" ? color.of : color.of[style]!, style);
+}
+
+/** The channels a color fills with in one color style: its background part, followed through its references. */
+function fillOf(configuration: InterfaceConfiguration, name: string, style: string): string {
+  const color = configuration.colors[name]!;
+  if (color.background) return constantOf(configuration, color.background, style);
+  if (!isReference(color)) return color.rgb[style]!;
+  return fillOf(configuration, typeof color.of === "string" ? color.of : color.of[style]!, style);
+}
+
+/**
+ * The focus ring's color on a fill, in one color style: brand, foreground when brand would not show on it, background
+ * when foreground would not either.
+ */
+function focusOn(configuration: InterfaceConfiguration, fill: string, style: string): string {
+  if (fill !== constantOf(configuration, "brand", style)) return "brand";
+  return fill === constantOf(configuration, "foreground", style) ? "background" : "foreground";
 }
 
 /** A color style's sources: each constant color's channels, and the colors chosen per style. */
@@ -110,26 +125,36 @@ function colorStyleDeclarations(configuration: InterfaceConfiguration, style: st
     if (!isReference(color)) declarations.push(`--${name}-color-rgb:${color.rgb[style]}`);
     else if (typeof color.of !== "string") declarations.push(...referenceDeclarations(name, color, color.of[style]!));
   }
+  // The focus ring on the page (its background) and on each color's fill.
+  const page = focusOn(configuration, constantOf(configuration, "background", style), style);
+  declarations.push(`--focus-color-rgb:var(--${page}-color-rgb)`);
+  for (const name of Object.keys(configuration.colors)) {
+    const focus = focusOn(configuration, fillOf(configuration, name, style), style);
+    declarations.push(`--${name}-focus-color-rgb:var(--${focus}-color-rgb)`);
+  }
   return declarations;
 }
 
 /** The formulas every color (and the color a component wears) derives from its channels, alphas and gradient. */
 function formulas(name: string): Declarations {
   const color_ = `--${name}`;
+  const opaque = (part: string) =>
+    `${color_}-${part}-color:rgb(var(${color_}-${part}-color-rgb) / var(${color_}-color-rgb-alpha))`;
   return [
     `${color_}-color-rgb-alpha:var(--color-rgb-alpha)`,
     `${color_}-color:rgb(var(${color_}-color-rgb) / var(${color_}-color-rgb-alpha))`,
     `${color_}-transparent-color-rgb-alpha:var(--transparent-color-rgb-alpha)`,
-    `${color_}-transparent-color:rgb(var(${color_}-transparent-color-rgb) / var(${color_}-transparent-color-rgb-alpha))`,
+    `${color_}-transparent-color:rgb(var(${color_}-background-color-rgb) / var(${color_}-transparent-color-rgb-alpha))`,
     ...(["hover", "active"] as const).flatMap((state) => [
       `${color_}-transparent-${state}-color-rgb-alpha:var(--transparent-${state}-color-rgb-alpha)`,
-      `${color_}-transparent-${state}-color:rgb(var(${color_}-transparent-color-rgb) / var(${color_}-transparent-${state}-color-rgb-alpha))`,
+      `${color_}-transparent-${state}-color:rgb(var(${color_}-background-color-rgb) / var(${color_}-transparent-${state}-color-rgb-alpha))`,
     ]),
-    `${color_}-border-color:var(${color_}-transparent-color)`,
+    `${color_}-border-color:rgb(var(${color_}-border-color-rgb) / var(${color_}-transparent-color-rgb-alpha))`,
     `${color_}-on-color:rgb(var(${color_}-on-color-rgb))`,
-    `${color_}-hover-color:rgb(var(${color_}-hover-color-rgb) / var(${color_}-color-rgb-alpha))`,
-    `${color_}-filled-hover-color:rgb(var(${color_}-filled-hover-color-rgb) / var(${color_}-color-rgb-alpha))`,
-    `${color_}-filled-hover-on-color:rgb(var(${color_}-filled-hover-on-color-rgb))`,
+    opaque("hover"),
+    opaque("active"),
+    opaque("background"),
+    `${color_}-focus-color:rgb(var(${color_}-focus-color-rgb))`,
     `${color_}-color-paint:var(${color_}-color-gradient, linear-gradient(var(${color_}-color), var(${color_}-color)))`,
   ];
 }
@@ -140,7 +165,6 @@ function derivedDeclarations(name: string, color: ColorDefinition): Declarations
   return [
     ...(fixedReference ? referenceDeclarations(name, color, fixedReference) : []),
     ...PARTS.map((part) => ownPart(name, color, part)).filter((declaration) => declaration !== undefined),
-    ...ownFilledHover(name, color),
     ...ownGradient(name, color),
     ...formulas(name),
   ];
@@ -154,7 +178,7 @@ const currentColor = (name: string): Declarations =>
   take("current", name, [
     "color-rgb",
     ...PARTS.map((part) => `${part}-color-rgb`),
-    ...FILLED_HOVER_VALUES,
+    "focus-color-rgb",
     ...GRADIENT_VALUES,
   ]);
 
@@ -163,7 +187,7 @@ const declare = (declarations: AxisDeclarations): Declarations =>
 
 /**
  * One axis's rules: each value at rest, then hovered and pressed on interactive boxes. Only a box left to the pointer
- * (`data-state="none"`) turns when hovered or pressed; a set state stays: `hover` looks hovered, `active` and
+ * (`data-state="index"`) turns when hovered or pressed; a set state stays: `hover` looks hovered, `active` and
  * `loading` pressed, `enabled` and `disabled` at rest. Hover and pressed repeat the rest values under theirs, so a
  * breakpoint's value replaces the base value's whole look.
  */
@@ -179,8 +203,8 @@ function axisRules(axis: Axis, breakpoint?: number): string[] {
     const active = declare({ ...value.rest, ...value.hover, ...value.active });
     if (!stateful) continue;
     rules.push(block(`[data-interactive][data-state="hover"]${selector}`, hover));
-    rules.push(media("(hover:hover)", [block(`[data-interactive][data-state="none"]:hover${selector}`, hover)]));
-    const pressed = ['[data-state="active"]', '[data-state="loading"]', '[data-state="none"]:active'];
+    rules.push(media("(hover:hover)", [block(`[data-interactive][data-state="index"]:hover${selector}`, hover)]));
+    const pressed = ['[data-state="active"]', '[data-state="loading"]', '[data-state="index"]:active'];
     rules.push(block(pressed.map((state) => `[data-interactive]${state}${selector}`).join(","), active));
   }
   return rules;
@@ -217,7 +241,7 @@ function attributeRules(configuration: InterfaceConfiguration, breakpoint?: numb
         Object.keys(size).map((key) => `--current-${key}:var(--${name}-${key})`),
       ),
     );
-  for (const axis of boxAxes(configuration.scale)) rules.push(...axisRules(axis, breakpoint));
+  for (const axis of boxAxes(configuration.scale, configuration.positions)) rules.push(...axisRules(axis, breakpoint));
   return rules;
 }
 
@@ -266,9 +290,6 @@ export function interfaceStyleSheet(configuration: InterfaceConfiguration): stri
     ...Object.entries(BOX_INITIAL_VALUES).map(
       ([name, value]) => `@property --${name}{syntax:"*";inherits:false;initial-value:${value}}`,
     ),
-    // The glow's angle, registered so it turns smoothly toward the pointer. Its syntax "<angle>" is written with CSS
-    // escapes, so no HTML parser mistakes it for a tag.
-    '@property --glow-angle{syntax:"\\3c angle\\3e ";inherits:false;initial-value:90deg}',
     block(":root", root),
     block(`:root,${select("data-style-color", starting)}`, colorStyleDeclarations(configuration, starting)),
     ...attributeRules(configuration).filter((rule) => !rule.startsWith(`${select("data-style-color", starting)}{`)),
@@ -280,16 +301,19 @@ export function interfaceStyleSheet(configuration: InterfaceConfiguration): stri
       ]),
     );
   rules.push(
-    block(
-      scope.join(","),
-      Object.entries(configuration.colors).flatMap(([name, color]) => derivedDeclarations(name, color)),
-    ),
+    block(scope.join(","), [
+      ...Object.entries(configuration.colors).flatMap(([name, color]) => derivedDeclarations(name, color)),
+      "--focus-color:rgb(var(--focus-color-rgb))",
+    ]),
   );
   const styleScopes = scope.slice(1);
   rules.push(
+    block(`:root,${styleScopes.map((selector) => `${selector}:not([data-color])`).join(",")}`, currentColor("index")),
+  );
+  rules.push(
     block(
-      `:root,${styleScopes.map((selector) => `${selector}:not([data-color])`).join(",")}`,
-      currentColor("foreground"),
+      "[data-glow]:not([data-glow-position])",
+      declare(glowPosition(configuration.positions[configuration.defaultGlowPosition]!)),
     ),
   );
   rules.push(block([":root", "[data-color]", ...styleScopes].join(","), CURRENT));

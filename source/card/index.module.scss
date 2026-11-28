@@ -7,13 +7,13 @@
   margin: 0;
   font-size: var(--scale-16);
   font-weight: 600;
+  // A title is in its color's active color (foreground on index).
+  color: var(--current-active-color);
 }
 
 :where(.description) {
   margin: 0;
-  // The card's own text, softened, so it reads on any fill.
   color: inherit;
-  opacity: 0.7;
   font-size: var(--scale-14);
 }
 

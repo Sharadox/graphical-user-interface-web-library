@@ -7,7 +7,7 @@
   text-align: start;
 
   &:focus-visible {
-    outline: var(--focus-thickness) solid var(--foreground-color);
+    outline: var(--focus-thickness) solid var(--focus-color);
     outline-offset: var(--focus-offset);
   }
 }

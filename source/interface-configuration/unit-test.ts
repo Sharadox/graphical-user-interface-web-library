@@ -13,11 +13,15 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
   expect(DEFAULT_INTERFACE.colors.white).toEqual({ rgb: { white: "255 255 255", black: "255 255 255" }, on: "black" });
   expect(DEFAULT_INTERFACE.colors.cyan).toMatchObject({ rgb: { black: "0 255 255" } });
   expect(DEFAULT_INTERFACE.colors.magenta).toMatchObject({ rgb: { black: "255 0 255" } });
-  expect(DEFAULT_INTERFACE.colors.middleground).toEqual({
-    rgb: { white: "94 94 94", black: "161 161 161" },
-    transparent: "foreground",
+  // Middleground is a color like any other.
+  expect(DEFAULT_INTERFACE.colors.middleground).toEqual({ rgb: { white: "94 94 94", black: "161 161 161" } });
+  // Index, every component's color: middleground text that turns foreground, on foreground's fill and border.
+  expect(DEFAULT_INTERFACE.colors.index).toEqual({
+    of: "middleground",
+    on: "background",
     hover: "foreground",
-    filledHover: "foreground",
+    background: "foreground",
+    border: "foreground",
   });
   // The rainbow paints with the six hues; its flat color (icons, focus rings, dashed borders) is foreground's.
   expect(DEFAULT_INTERFACE.colors.rainbow).toEqual({
@@ -61,10 +65,27 @@ test("the defaults hold the owner's colors, styles, scale and breakpoints", () =
     "wrapper-padding": "var(--scale-16)",
     "gradient-angle": "90deg",
     "glow-range": "var(--scale-128)",
-    "glow-spread": "var(--scale-32)",
-    "glow-radius": "var(--glow-spread)",
+    "glow-overflow": "var(--scale-8)",
+    "glow-size": "max(var(--scale-32), calc(50cqw + 50cqh))",
     "glow-opacity": "50%",
+    "focus-offset": "calc(-2 * var(--focus-thickness))",
   });
+  expect(DEFAULT_INTERFACE.values).not.toHaveProperty("glow-start-angle");
+  // Every position, physical and logical (start and end follow the reading direction), from 0 to 1 of each side.
+  expect(DEFAULT_INTERFACE.positions).toMatchObject({
+    center: { x: 0.5, y: 0.5 },
+    top: { x: 0.5, y: 0 },
+    "bottom-right": { x: 1, y: 1 },
+    left: { x: 0, y: 0.5 },
+    start: { inline: 0, y: 0.5 },
+    end: { inline: 1, y: 0.5 },
+    "start-start": { inline: 0, y: 0 },
+    "end-start": { inline: 0, y: 1 },
+    "top-end": { inline: 1, y: 0 },
+    "bottom-start": { inline: 0, y: 1 },
+  });
+  expect(Object.keys(DEFAULT_INTERFACE.positions)).toHaveLength(19);
+  expect(DEFAULT_INTERFACE.defaultGlowPosition).toBe("bottom");
 });
 
 test("tells references from constant colors", () => {
@@ -79,7 +100,10 @@ test("a brand overrides and adds to the defaults, one level deep, without changi
     inheritColorStyles: { light: "black" },
     values: { "transparent-color-rgb-alpha": "20%" },
     sizes: { small: { "minimum-size": "24px" } },
+    positions: { "a-quarter": { inline: 0.25, y: 0 } },
   });
+  expect(brand.positions["a-quarter"]).toEqual({ inline: 0.25, y: 0 });
+  expect(brand.positions.top).toEqual({ x: 0.5, y: 0 });
   expect(brand.colors.gold).toEqual({ rgb: { white: "180 140 60", black: "212 175 90" } });
   expect(brand.colors.brand).toEqual({ of: "gold" });
   expect(brand.colors.red).toEqual(DEFAULT_INTERFACE.colors.red);
@@ -115,9 +139,14 @@ test("refuses a configuration that points nowhere", () => {
   expect(() => defineInterface({ colors: { gold: { of: "white", gradient: ["white", "silver"] } } })).toThrow(
     'color "gold" refers to "silver"',
   );
-  expect(() => defineInterface({ colors: { gold: { of: "white", filledHover: "silver" } } })).toThrow(
+  expect(() => defineInterface({ colors: { gold: { of: "white", active: "silver" } } })).toThrow(
     'color "gold" refers to "silver"',
   );
+  expect(() => defineInterface({ colors: { gold: { of: "white", border: "silver" } } })).toThrow(
+    'color "gold" refers to "silver"',
+  );
+  expect(() => defineInterface({ positions: { cursor: { x: 0, y: 0 } } })).toThrow('"cursor" is not a position name');
+  expect(() => defineInterface({ defaultGlowPosition: "nowhere" })).toThrow('no position "nowhere"');
   expect(() => defineInterface({ colors: { "Gold Leaf": { of: "white" } } })).toThrow(
     '"Gold Leaf" is not a kebab-case name',
   );

@@ -16,6 +16,7 @@ test("a tab list named by its label; the chosen tab filled, its panel shown and 
   expect(tabs.map((tab) => tab.getAttribute("aria-selected"))).toEqual(["true", "false", "false"]);
   expect(tabs.map((tab) => tab.tabIndex)).toEqual([0, -1, -1]);
   expect(tabs[0]!.getAttribute("data-variant")).toBe("filled");
+  expect(tabs[0]!.getAttribute("data-color")).toBe("index");
   expect(tabs[1]!.getAttribute("data-variant")).toBe("transparent");
   const panel = screen.getByRole("tabpanel");
   expect(panel.textContent).toBe("Profile panel");

@@ -20,7 +20,7 @@ export function initials(name: string): string {
 
 /**
  * A person's (or a company's) picture: a square box of the size's height, round by default. Without a picture, or
- * when it can't load, their initials on a filled box (brand by default). Either way it is an image named by `name`.
+ * when it can't load, their initials on a filled box (index by default). Either way it is an image named by `name`.
  *
  * The picture is a plain `img`: avatars come from anywhere (uploads, other services), which next/image would need
  * each site to allow by address.
@@ -31,7 +31,7 @@ export function initials(name: string): string {
 export function Avatar({
   name,
   src,
-  color = "brand",
+  color = "index",
   corner = "circle",
   size = "medium",
   className,

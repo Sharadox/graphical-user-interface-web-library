@@ -15,6 +15,7 @@ test("a radio group: the chosen option checked, filled and the only one in the t
   const radios = screen.getAllByRole("radio");
   expect(radios.map((radio) => radio.getAttribute("aria-checked"))).toEqual(["false", "true", "false"]);
   expect(radios.map((radio) => radio.getAttribute("data-variant"))).toEqual(["transparent", "filled", "transparent"]);
+  expect(radios[0]!.getAttribute("data-color")).toBe("index");
   expect(radios.map((radio) => radio.tabIndex)).toEqual([-1, 0, -1]);
 });
 

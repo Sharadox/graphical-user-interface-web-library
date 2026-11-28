@@ -1,31 +1,128 @@
-// A light around its box, under it: painted before the box (lower in the stack), so the box's fill covers its middle
-// and a see-through box shows it. Its brightest point sits on the box's edge at --glow-angle, which JavaScript turns
-// toward the pointer and a transition smooths.
-.glow {
-  --glow-angle: var(--glow-start-angle);
-  position: absolute;
-  top: calc(anchor(top) - var(--glow-spread));
-  right: calc(anchor(right) - var(--glow-spread));
-  bottom: calc(anchor(bottom) - var(--glow-spread));
-  left: calc(anchor(left) - var(--glow-spread));
-  z-index: 0;
-  pointer-events: none;
-  background: var(--current-color-paint);
-  opacity: var(--glow-opacity);
-  mask: radial-gradient(
-    circle var(--glow-radius) at calc(50% + cos(var(--glow-angle)) * (50% - var(--glow-spread)))
-      calc(50% + sin(var(--glow-angle)) * (50% - var(--glow-spread))),
-    #000,
-    transparent
-  );
-  transition: --glow-angle var(--duration) var(--easing);
+// A soft light of its box's color. The layer covers the box (a size container, so the light is sized to the box);
+// the light rests at --glow-x and --glow-y (0 to 1 of the box, from the glow position) and JavaScript moves it toward
+// the pointer, which a transition smooths. Its paint breathes and floats while on screen, and swells while pressed.
+:where(.glow) {
+  --glow-rest-opacity: 1;
+  --glow-inline-origin: 0;
+  --glow-inline-direction: 1;
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
+// A logical position (start, end) follows the reading direction.
+:where(.glow:dir(rtl)) {
+  --glow-inline-origin: 1;
+  --glow-inline-direction: -1;
+}
+
+.glow {
+  position: absolute;
+  container-type: size;
+  pointer-events: none;
+}
+
+// Outside: right after its box, under it, anchored to it.
+.glow[data-glow-boundary="outside"] {
+  top: anchor(top);
+  right: anchor(right);
+  bottom: anchor(bottom);
+  left: anchor(left);
+  z-index: 0;
 
   // Without anchor positioning it couldn't follow its box: no glow.
   @supports not (anchor-name: --glow) {
     display: none;
+  }
+}
+
+// Inside: its box's first child, clipped to it, over its fill and under its content (the box isolates it).
+.glow[data-glow-boundary="inside"] {
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  inline-size: var(--glow-size);
+  aspect-ratio: 1;
+  margin-block-start: calc(-0.5 * var(--glow-size));
+  margin-inline-start: calc(-0.5 * var(--glow-size));
+  translate: calc(var(--glow-x) * 100cqw) calc(var(--glow-y) * 100cqh);
+  opacity: calc(var(--glow-opacity) * var(--glow-rest-opacity));
+  transition:
+    translate var(--duration) var(--easing),
+    opacity var(--duration) var(--easing),
+    scale var(--quick-duration) var(--easing);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--current-color-paint);
+    mask: radial-gradient(closest-side, #000, transparent);
+    animation:
+      breathe var(--glow-breathe-duration) ease-in-out infinite alternate,
+      float var(--glow-float-duration) ease-in-out infinite;
+    animation-play-state: paused;
+  }
+}
+
+.glow[data-glow-boundary="inside"] .light::before {
+  background: var(--glow-paint, var(--current-color-paint));
+}
+
+// Near the pointer it shows (a cursor glow appears); pressed, it swells.
+.glow[data-near] .light {
+  opacity: var(--glow-opacity);
+}
+
+.glow[data-pressed] .light {
+  scale: var(--glow-press-scale);
+}
+
+.glow[data-visible] .light::before {
+  animation-play-state: running;
+}
+
+@keyframes breathe {
+  from {
+    opacity: 0.7;
+    scale: 0.9;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1.1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  25% {
+    translate: 6% -4%;
+  }
+
+  50% {
+    translate: -2% 5%;
+  }
+
+  75% {
+    translate: -6% -3%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .light {
+    transition: opacity var(--duration) var(--easing);
+
+    &::before {
+      animation: none;
+    }
   }
 }

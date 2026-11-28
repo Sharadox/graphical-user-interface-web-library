@@ -189,8 +189,8 @@ export function DatePicker(properties: DatePickerProperties) {
           <Box
             field
             variant={variant}
-            color={color ?? (error === undefined ? "middleground" : "error")}
-            state={state ?? (disabled ? "disabled" : "none")}
+            color={color ?? (error === undefined ? "index" : "error")}
+            state={state ?? (disabled ? "disabled" : "index")}
             suffix={<Icon name="calendar" />}
             {...look}
             className={styles.field}
@@ -226,7 +226,7 @@ export function DatePicker(properties: DatePickerProperties) {
                 <Button
                   square
                   variant="transparent"
-                  color="middleground"
+                  color="index"
                   icon="chevron-left"
                   aria-label={previousLabel}
                   disabled={min !== undefined && lastOfMonth(previousMonth) < min}
@@ -238,7 +238,7 @@ export function DatePicker(properties: DatePickerProperties) {
                 <Button
                   square
                   variant="transparent"
-                  color="middleground"
+                  color="index"
                   icon="chevron-right"
                   aria-label={nextLabel}
                   disabled={max !== undefined && nextMonth > max}
@@ -271,11 +271,7 @@ export function DatePicker(properties: DatePickerProperties) {
                             square
                             variant={day === chosen ? "filled" : "transparent"}
                             color={
-                              day === chosen
-                                ? "brand"
-                                : parseDay(day)!.month === view.month
-                                  ? "foreground"
-                                  : "middleground"
+                              day === chosen ? "brand" : parseDay(day)!.month === view.month ? "foreground" : "index"
                             }
                             tabIndex={day === focused ? 0 : -1}
                             aria-label={write(day, { dateStyle: "full" })}

@@ -11,8 +11,8 @@ test("a native checkbox named by its label, drawn outlined, then filled once che
   const input = screen.getByRole("checkbox", { name: "Remember me" }) as HTMLInputElement;
   expect(input.getAttribute("name")).toBe("remember");
   expect(mark(input).getAttribute("data-variant")).toBe("outlined");
-  expect(mark(input).getAttribute("data-color")).toBe("brand");
-  expect(mark(input).getAttribute("data-size")).toBe("small");
+  expect(mark(input).getAttribute("data-color")).toBe("index");
+  expect(mark(input).getAttribute("data-size")).toBe("medium");
   fireEvent.click(input);
   expect(input.checked).toBe(true);
   expect(change).toHaveBeenLastCalledWith(true);

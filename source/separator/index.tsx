@@ -5,13 +5,13 @@ import styles from "./index.module.scss";
 
 /**
  * A line between things: a horizontal rule by default, or vertical between items in a row. It is the color's border
- * color (foreground's by default), in the line style and thickness.
+ * color (index's by default), in the line style and thickness.
  *
  * @example
  * <Separator />
  * <Separator orientation="vertical" line="dashed" />
  */
-export function Separator({ orientation = "horizontal", color = "foreground", line, className }: SeparatorProperties) {
+export function Separator({ orientation = "horizontal", color = "index", line, className }: SeparatorProperties) {
   return (
     <hr
       {...lookAttributes({ color, line })}

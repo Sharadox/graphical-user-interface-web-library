@@ -7,6 +7,6 @@
  */
 export const BUTTON_AXES = {
   variant: ["filled", "outlined", "transparent", "inline"],
-  state: ["none", "enabled", "hover", "active", "loading", "disabled"],
+  state: ["index", "enabled", "hover", "active", "loading", "disabled"],
   size: ["small", "medium", "large"],
 } as const;

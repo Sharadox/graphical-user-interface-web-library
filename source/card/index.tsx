@@ -6,7 +6,7 @@ import styles from "./index.module.scss";
 /**
  * A card: one thing on its own (a picture, a name, an identifier). Its title, description and content on one side,
  * its action buttons on the other, centered on the card's height; they wrap under it when there is no room. An
- * outlined foreground article by default (see-through, so glass), with every box look.
+ * outlined index article (its title in the active color) by default (see-through, so glass), with every box look.
  *
  * @example
  * <Card title="Email" description="Where sign-in codes go." action={<Button variant="outlined">Edit</Button>}>ana@example.com</Card>
@@ -18,7 +18,7 @@ export function Card(properties: CardProperties) {
     <Box
       as="article"
       variant="outlined"
-      color="foreground"
+      color="index"
       padding={24}
       gap={16}
       justify="space-between"

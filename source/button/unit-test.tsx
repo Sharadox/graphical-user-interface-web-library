@@ -5,15 +5,15 @@ afterEach(cleanup);
 import type { ButtonLinkProperties } from "@sharadox/graphical-user-interface-web-library/button/type";
 import { Button } from "@sharadox/graphical-user-interface-web-library/button";
 
-test("without href it is a button: filled, brand, medium, left to the pointer (state none)", () => {
+test("without href it is a button: filled, index, medium, left to the pointer (state index)", () => {
   const click = vi.fn();
   render(<Button onClick={click}>Save</Button>);
   const button = screen.getByRole("button", { name: "Save" });
   expect(button.tagName).toBe("BUTTON");
   expect(button.getAttribute("type")).toBe("button");
   expect(button.getAttribute("data-variant")).toBe("filled");
-  expect(button.getAttribute("data-color")).toBe("brand");
-  expect(button.getAttribute("data-state")).toBe("none");
+  expect(button.getAttribute("data-color")).toBe("index");
+  expect(button.getAttribute("data-state")).toBe("index");
   expect(button.getAttribute("data-interactive")).toBe("");
   fireEvent.click(button);
   expect(click).toHaveBeenCalledOnce();

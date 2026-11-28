@@ -20,7 +20,7 @@ export function Tip({ text, label }: TipProperties) {
       <Button
         square
         variant="transparent"
-        color="middleground"
+        color="index"
         size="small"
         icon="question"
         aria-label={label}

@@ -21,7 +21,7 @@ const LOOK_ATTRIBUTES: ReadonlyArray<[keyof BoxLook, string]> = [
   ["wrap", "data-wrap"],
   ["gap", "data-gap"],
   ["padding", "data-padding"],
-  ["glowStart", "data-glow-start"],
+  ["glowPosition", "data-glow-position"],
 ];
 
 /** The attributes for a set of looks, each for every width or per breakpoint. */
@@ -39,7 +39,7 @@ export function lookAttributes(look: BoxLook): Record<string, string> {
  * variant, color, color style, corner, line and size, each for every width or per breakpoint, with an optional
  * prefix and suffix section (at least square). An interactive box adds the hover and pressed looks, a pointer cursor
  * and its states; while loading, the spinner covers its content, which keeps its size and its name. Modifications add
- * to any look: glass (the default) and a glow that turns toward the pointer.
+ * to any look: glass (the default) and a glow that moves toward the pointer, outside the box or inside it.
  *
  * @example
  * <Box variant="outlined" color="brand" padding={16} direction={{ base: "top-to-bottom", 960: "left-to-right" }}>…</Box>
@@ -53,6 +53,7 @@ export function Box(properties: BoxProperties) {
     field,
     state,
     modifications,
+    glowBoundary = "outside",
     className,
     children,
     ...rest
@@ -66,7 +67,13 @@ export function Box(properties: BoxProperties) {
     else element[key] = value;
   }
   const sectioned = prefix !== undefined || suffix !== undefined || square || interactive;
-  const currentState = interactive ? (state ?? "none") : undefined;
+  const currentState = interactive ? (state ?? "index") : undefined;
+  const glowing = modifications?.includes("glow");
+  const { color, colorStyle, glowPosition } = look;
+  const glow = glowing && (
+    <GlowLayer attributes={lookAttributes({ color, colorStyle, glowPosition })} boundary={glowBoundary} />
+  );
+  const inside = glowBoundary === "inside" && glow;
   const box = (
     <Element
       {...element}
@@ -75,10 +82,12 @@ export function Box(properties: BoxProperties) {
       {...(square && { "data-square": "" })}
       {...(field && { "data-field": "" })}
       {...(modifications && { "data-modifications": modifications.join(" ") })}
+      {...(glowing && { "data-glow-boundary": glowBoundary })}
       {...(interactive && { "data-interactive": "", "data-state": currentState })}
       {...(currentState === "disabled" && { "aria-disabled": "true" })}
       {...(currentState === "loading" && { "aria-busy": "true" })}
     >
+      {inside}
       {sectioned ? (
         <>
           {prefix !== undefined && (
@@ -101,12 +110,11 @@ export function Box(properties: BoxProperties) {
       )}
     </Element>
   );
-  if (!modifications?.includes("glow")) return box;
-  const { color, colorStyle, glowStart } = look;
+  if (!glow || inside) return box;
   return (
     <>
       {box}
-      <GlowLayer attributes={lookAttributes({ color, colorStyle, glowStart })} />
+      {glow}
     </>
   );
 }

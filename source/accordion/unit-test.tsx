@@ -17,6 +17,7 @@ test("each title is a button that opens its region, one at a time by default", (
   expect(region.getAttribute("role")).toBe("region");
   expect(region.getAttribute("aria-labelledby")).toBe(one!.id);
   expect(region.hasAttribute("inert")).toBe(true);
+  expect(one!.closest("[data-color]")!.getAttribute("data-color")).toBe("index");
   expect(region.getAttribute("data-open")).toBeNull();
   fireEvent.click(one!);
   expect(one!.getAttribute("aria-expanded")).toBe("true");

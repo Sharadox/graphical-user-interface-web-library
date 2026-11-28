@@ -13,6 +13,8 @@ test("a switch named by its label: off and outlined, then on and filled", () => 
   expect(control.getAttribute("aria-checked")).toBe("false");
   expect(track(control).getAttribute("data-variant")).toBe("outlined");
   expect(track(control).getAttribute("data-style-corner")).toBe("circle");
+  expect(track(control).getAttribute("data-color")).toBe("index");
+  expect(track(control).getAttribute("data-size")).toBe("medium");
   fireEvent.click(control);
   expect(control.getAttribute("aria-checked")).toBe("true");
   expect(track(control).getAttribute("data-variant")).toBe("filled");

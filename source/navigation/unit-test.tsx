@@ -28,7 +28,7 @@ test("a bar with the brand, the links (the current one marked) and the actions",
   expect(links.map((link) => link.textContent)).toEqual(["Tokens", "Button"]);
   expect(links[1]!.getAttribute("aria-current")).toBe("page");
   expect(links[1]!.getAttribute("data-color")).toBe("foreground");
-  expect(links[0]!.getAttribute("data-color")).toBe("middleground");
+  expect(links[0]!.getAttribute("data-color")).toBe("index");
   expect(screen.getByRole("link", { name: "Brand" })).toBeDefined();
   expect(screen.getByRole("button", { name: "Action" })).toBeDefined();
 });
@@ -66,4 +66,13 @@ test("collapses at a chosen breakpoint; without actions there is nothing beside 
   expect(bar.className).toContain("custom");
   fireEvent.click(screen.getByRole("button", { name: "Menu" }));
   expect(document.querySelector("[data-menu-actions]")).toBeNull();
+});
+
+test("the bar spans the screen (its line from edge to edge); its content sits in a wrapper", () => {
+  setUp();
+  const bar = screen.getByRole("banner");
+  expect(bar.hasAttribute("data-wrapper")).toBe(false);
+  const wrapper = bar.firstElementChild!;
+  expect(wrapper.getAttribute("data-wrapper")).toBe("");
+  expect(wrapper.contains(screen.getByRole("navigation", { name: "Main" }))).toBe(true);
 });

@@ -11,7 +11,9 @@
   gap: var(--box-gap);
   min-block-size: var(--box-minimum-size);
   min-inline-size: var(--box-minimum-size);
-  padding: var(--box-padding);
+  // The edge is the line's thickness on every variant but inline: a border on outlined boxes, padding on the others,
+  // so every variant is the same size.
+  padding: calc(var(--box-padding) + var(--box-edge-thickness) - var(--box-border-thickness));
   // A gradient color's flat border hides on whole lines, where its gradient ring is drawn instead.
   border: var(--box-border-thickness) var(--line-style)
     color-mix(in srgb, transparent calc(var(--box-border-gradient-weight) * var(--line-solid)), var(--box-border-color));
@@ -29,7 +31,13 @@
   text-decoration: none;
   // The box's own values don't pass down (they are registered without inheritance); its sections take these.
   --section-padding: var(--box-section-padding);
-  --section-minimum-size: calc(var(--box-minimum-size) - 2 * var(--box-border-thickness));
+  --section-minimum-size: calc(var(--box-minimum-size) - 2 * var(--box-edge-thickness));
+  // Sections are parted like the box's edge: by a border on outlined boxes, by as much space on the others.
+  --section-border-thickness: var(--box-border-thickness);
+  --section-border-color: var(--box-border-color);
+  --section-edge: calc(var(--box-edge-thickness) - var(--box-border-thickness));
+  // An inner glow's paint.
+  --glow-paint: var(--box-glow-paint);
   // Its gradient ring is a pseudo-element, which the box's own (non-inheriting) values don't reach either.
   --ring-display: var(--box-ring-display);
   --ring-paint: var(--box-border-paint);
@@ -65,8 +73,12 @@
   backdrop-filter: none;
 }
 
-:where(.box[data-modifications~="glow"]) {
+:where(.box[data-glow-boundary="outside"]) {
   z-index: 1;
+}
+
+:where(.box[data-glow-boundary="inside"]) {
+  isolation: isolate;
 }
 
 :where(.box[data-variant], .box[data-size], .box[data-interactive]) {
@@ -83,8 +95,9 @@
     cursor: default;
   }
 
+  // Inside the box's edge, in the color its variant chose: brand, or what shows on its fill.
   &:focus-visible {
-    outline: var(--focus-thickness) solid var(--current-color);
+    outline: var(--focus-thickness) solid var(--box-focus-color);
     outline-offset: var(--focus-offset);
   }
 }
@@ -98,8 +111,7 @@
   opacity: var(--disabled-opacity);
 }
 
-// A field: typed into, so a text cursor and the field's weight; its focus ring circles the whole box, and a line
-// parts each prefix and suffix from the content.
+// A field: typed into, so a text cursor and the field's weight; its focus ring circles the whole box.
 :where(.box[data-field]) {
   cursor: text;
   font-weight: var(--current-field-font-weight);
@@ -109,16 +121,8 @@
   }
 
   &:focus-within {
-    outline: var(--focus-thickness) solid var(--current-color);
+    outline: var(--focus-thickness) solid var(--box-focus-color);
     outline-offset: var(--focus-offset);
-  }
-
-  > :where([data-section="prefix"]) {
-    border-inline-end: var(--box-border-thickness) var(--line-style) var(--box-border-color);
-  }
-
-  > :where([data-section="suffix"]) {
-    border-inline-start: var(--box-border-thickness) var(--line-style) var(--box-border-color);
   }
 }
 
@@ -136,6 +140,16 @@
   gap: inherit;
   min-inline-size: 0;
   padding-inline: var(--section-padding);
+}
+
+:where(.box) > :where([data-section="prefix"]) {
+  border-inline-end: var(--section-border-thickness) var(--line-style) var(--section-border-color);
+  padding-inline-end: var(--section-edge);
+}
+
+:where(.box) > :where([data-section="suffix"]) {
+  border-inline-start: var(--section-border-thickness) var(--line-style) var(--section-border-color);
+  padding-inline-start: var(--section-edge);
 }
 
 :where(.section) {

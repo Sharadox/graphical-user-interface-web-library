@@ -65,14 +65,7 @@ export function Dialog({ open, onClose, title, closeLabel, children }: DialogPro
             <h2 id={titleId} className={styles.title}>
               {title}
             </h2>
-            <Button
-              square
-              variant="transparent"
-              color="middleground"
-              icon="close"
-              aria-label={closeLabel}
-              onClick={onClose}
-            />
+            <Button square variant="transparent" icon="close" aria-label={closeLabel} onClick={onClose} />
           </Box>
           {children}
         </Box>

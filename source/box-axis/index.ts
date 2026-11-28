@@ -1,4 +1,9 @@
 import type { Axis, AxisDeclarations } from "@sharadox/graphical-user-interface-web-library/box-axis/type";
+import {
+  CURSOR_POSITION,
+  DEFAULT_INTERFACE,
+} from "@sharadox/graphical-user-interface-web-library/interface-configuration";
+import type { Position } from "@sharadox/graphical-user-interface-web-library/interface-configuration/type";
 
 /** Where every box value starts: a plain, centered flex box with nothing around it. */
 export const BOX_INITIAL_VALUES: AxisDeclarations = {
@@ -13,6 +18,7 @@ export const BOX_INITIAL_VALUES: AxisDeclarations = {
   "box-minimum-size": "0px",
   "box-section-padding": "0px",
   "box-border-thickness": "0px",
+  "box-edge-thickness": "0px",
   "box-border-color": "transparent",
   "box-background": "transparent",
   "box-background-image": "none",
@@ -24,14 +30,25 @@ export const BOX_INITIAL_VALUES: AxisDeclarations = {
   "box-border-gradient-weight": "0%",
   "box-ring-display": "none",
   "box-backdrop": "none",
+  "box-focus-color": "currentcolor",
+  "box-glow-paint": "none",
 };
 
-/** What every variant sets, so one variant replaces another whole, at any breakpoint. */
+/**
+ * What every variant but inline sets, so one variant replaces another whole, at any breakpoint. The edge is the
+ * line's thickness on every one: outlined draws it as a border, the others (without one) as padding, so all are
+ * the same size.
+ */
 const SIZED: AxisDeclarations = {
   "box-display": "flex",
   "box-section-padding": "var(--current-section-padding)",
   "box-minimum-size": "var(--current-minimum-size)",
-  "box-border-thickness": "var(--line-thickness)",
+  "box-edge-thickness": "var(--line-thickness)",
+};
+/** Seen against the page: the page's focus ring, the color's glow. */
+const SEE_THROUGH: AxisDeclarations = {
+  "box-focus-color": "var(--focus-color)",
+  "box-glow-paint": "var(--current-color-paint)",
 };
 const GLASS = "blur(var(--glass-blur))";
 /** Text in the color, painted with its gradient where it has one. */
@@ -48,19 +65,21 @@ const UNBORDERED: AxisDeclarations = {
   "box-border-gradient-weight": "0%",
   "box-ring-display": "none",
 };
-/** A background in a transparent color, or its gradient (whose flat color then hides). */
+/** A background in a transparent color, or its gradient (whose flat color then hides), and the state's text. */
 const tint = (state: "hover" | "active") => ({
   "box-background": `color-mix(in srgb, transparent var(--current-color-gradient-weight), var(--current-transparent-${state}-color))`,
   "box-background-image": `var(--current-transparent-${state}-color-gradient, none)`,
-  "box-text-color": "var(--current-hover-color)",
+  "box-text-color": `var(--current-${state}-color)`,
 });
 /**
- * Outlined and transparent: the color's transparent background (or gradient) while hovered and pressed;
- * middleground's text turns. Outlined's border is the color's transparent one, a gradient on whole lines.
+ * Outlined and transparent: the color's transparent background (or gradient) and its hover and active text while
+ * hovered and pressed. Outlined's border is the color's border color, a gradient on whole lines; transparent has none.
  */
 const tinted = (bordered: boolean) => ({
   rest: {
     ...SIZED,
+    ...SEE_THROUGH,
+    "box-border-thickness": bordered ? "var(--line-thickness)" : "0px",
     "box-background": "transparent",
     "box-background-image": "none",
     ...PAINTED_TEXT,
@@ -85,7 +104,11 @@ export const VARIANT_AXIS: Axis = {
     filled: {
       rest: {
         ...SIZED,
-        "box-background": "var(--current-color)",
+        "box-border-thickness": "0px",
+        // Its focus ring and inner glow are drawn on its fill.
+        "box-focus-color": "var(--current-focus-color)",
+        "box-glow-paint": "linear-gradient(var(--current-on-color), var(--current-on-color))",
+        "box-background": "var(--current-background-color)",
         "box-background-image": "var(--current-color-gradient, none)",
         "box-text-color": "var(--current-on-color)",
         "box-text-paint": "none",
@@ -93,12 +116,6 @@ export const VARIANT_AXIS: Axis = {
         "box-text-clip": "border-box",
         ...UNBORDERED,
         "box-backdrop": "none",
-      },
-      // Unchanged, unless the color turns another on hover (middleground turns foreground).
-      hover: {
-        "box-background": "var(--current-filled-hover-color)",
-        "box-background-image": "var(--current-filled-hover-color-gradient, none)",
-        "box-text-color": "var(--current-filled-hover-on-color)",
       },
     },
     outlined: tinted(true),
@@ -109,6 +126,8 @@ export const VARIANT_AXIS: Axis = {
         "box-section-padding": "0px",
         "box-minimum-size": "0px",
         "box-border-thickness": "0px",
+        "box-edge-thickness": "0px",
+        ...SEE_THROUGH,
         "box-background": "transparent",
         "box-background-image": "none",
         ...PAINTED_TEXT,
@@ -116,7 +135,7 @@ export const VARIANT_AXIS: Axis = {
         "box-backdrop": "none",
       },
       hover: { "box-text-color": "var(--current-hover-color)" },
-      active: { "box-text-color": "var(--current-hover-color)" },
+      active: { "box-text-color": "var(--current-active-color)" },
     },
   },
 };
@@ -156,22 +175,42 @@ export const WRAP_AXIS = simple("data-wrap", "box-wrap", same("wrap", "nowrap"))
 const spaced = (attribute: string, property: string, scale: readonly number[]) =>
   simple(attribute, property, Object.fromEntries(scale.map((step) => [String(step), `var(--scale-${step})`])));
 
-/** Where a glow rests until the pointer comes near: below by default, or at any side. */
-export const GLOW_START_AXIS = simple("data-glow-start", "glow-start-angle", {
-  top: "-90deg",
-  end: "0deg",
-  bottom: "90deg",
-  start: "180deg",
+/**
+ * A position's place for a glow (`--glow-x` and `--glow-y`, from 0 to 1 of the box); a logical one follows the
+ * reading direction through the glow's `--glow-inline-origin` and `--glow-inline-direction`.
+ */
+export function glowPosition(position: Position): AxisDeclarations {
+  return {
+    "glow-x":
+      "x" in position
+        ? String(position.x)
+        : `calc(var(--glow-inline-origin) + var(--glow-inline-direction) * ${position.inline})`,
+    "glow-y": String(position.y),
+  };
+}
+
+/** Where a glow rests until the pointer comes near: every position, and `cursor` (hidden until the pointer comes). */
+export const glowPositionAxis = (positions: Readonly<Record<string, Position>>): Axis => ({
+  attribute: "data-glow-position",
+  values: {
+    ...Object.fromEntries(
+      Object.entries(positions).map(([name, position]) => [name, { rest: glowPosition(position) }]),
+    ),
+    [CURSOR_POSITION]: { rest: { ...glowPosition({ x: 0.5, y: 0.5 }), "glow-rest-opacity": "0" } },
+  },
 });
 
 /**
  * Every axis of a box, in the order their rules are written: variant, direction, justify, align, text align, and the
- * gap and padding from the scale, and where a glow starts.
+ * gap and padding from the scale, and where a glow rests (every position of the interface).
  *
  * @example
  * boxAxes(DEFAULT_INTERFACE.scale).map((axis) => axis.attribute); // ["data-variant", "data-direction", …]
  */
-export function boxAxes(scale: readonly number[]): Axis[] {
+export function boxAxes(
+  scale: readonly number[],
+  positions: Readonly<Record<string, Position>> = DEFAULT_INTERFACE.positions,
+): Axis[] {
   return [
     VARIANT_AXIS,
     DIRECTION_AXIS,
@@ -181,6 +220,6 @@ export function boxAxes(scale: readonly number[]): Axis[] {
     WRAP_AXIS,
     spaced("data-gap", "box-gap", scale),
     spaced("data-padding", "box-padding", scale),
-    GLOW_START_AXIS,
+    glowPositionAxis(positions),
   ];
 }

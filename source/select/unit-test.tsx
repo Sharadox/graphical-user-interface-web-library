@@ -17,7 +17,7 @@ test("a combobox named by its label, showing the placeholder, in a field box wit
   expect(select.textContent).toContain("Choose a month");
   expect(select.getAttribute("aria-expanded")).toBe("false");
   const field = select.closest("[data-field]")!;
-  expect(field.getAttribute("data-color")).toBe("middleground");
+  expect(field.getAttribute("data-color")).toBe("index");
   expect(field.lastElementChild!.getAttribute("data-section")).toBe("suffix");
   expect((document.querySelector('input[name="month"]') as HTMLInputElement).value).toBe("");
 });

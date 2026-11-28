@@ -19,6 +19,7 @@ test("a picture named by the person, round and square", () => {
   const box = picture.closest("[data-square]")!;
   expect(box.getAttribute("data-style-corner")).toBe("circle");
   expect(box.getAttribute("data-size")).toBe("medium");
+  expect(box.getAttribute("data-color")).toBe("index");
 });
 
 test("without a picture, or when it fails, the initials in a filled box", () => {

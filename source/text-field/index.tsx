@@ -6,7 +6,7 @@ import type { TextFieldProperties } from "@sharadox/graphical-user-interface-web
 import styles from "./index.module.scss";
 
 /**
- * A text field: its label, an outlined field box (middleground by default, the error color with an error) with
+ * A text field: its label, an outlined field box (index by default, the error color with an error) with
  * optional prefix and suffix sections, and its hint and error under it. One line by default; `multiline` makes it a
  * text area. Every look of a box applies, per breakpoint too.
  *
@@ -42,12 +42,12 @@ export function TextField(properties: TextFieldProperties) {
         <Box
           field
           variant={variant}
-          color={color ?? (error === undefined ? "middleground" : "error")}
+          color={color ?? (error === undefined ? "index" : "error")}
           colorStyle={colorStyle}
           corner={corner}
           line={line}
           size={size}
-          state={state ?? (disabled ? "disabled" : "none")}
+          state={state ?? (disabled ? "disabled" : "index")}
           prefix={prefix}
           suffix={suffix}
           className={classNames(styles.field, multiline && styles.multiline, className)}

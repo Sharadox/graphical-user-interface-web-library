@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, test } from "vitest";
 import { Card } from "@sharadox/graphical-user-interface-web-library/card";
@@ -12,7 +14,7 @@ test("an outlined article: title, description and content, the action beside the
   );
   const card = screen.getByRole("article");
   expect(card.getAttribute("data-variant")).toBe("outlined");
-  expect(card.getAttribute("data-color")).toBe("foreground");
+  expect(card.getAttribute("data-color")).toBe("index");
   expect(card.getAttribute("data-padding")).toBe("24");
   expect(screen.getByRole("heading", { name: "Email" }).tagName).toBe("H2");
   expect(screen.getByText("Where codes are sent.")).toBeDefined();
@@ -42,4 +44,13 @@ test("a chosen heading level, look and element; nothing empty is drawn", () => {
   const { container } = render(<Card>Only content</Card>);
   expect(container.querySelector("h2")).toBeNull();
   expect(container.textContent).toBe("Only content");
+});
+
+test("titles are in their color's active color (foreground on index), the card, dialog and accordion alike", () => {
+  const compiled = (name: string) =>
+    compile(join(process.cwd(), `source/${name}/index.module.scss`), { loadPaths: [join(process.cwd(), "source")] })
+      .css;
+  expect(compiled("card")).toMatch(/\.title\)? ?\{[^}]*color: var\(--current-active-color\)/);
+  expect(compiled("dialog")).toMatch(/\.title\)? ?\{[^}]*color: var\(--current-active-color\)/);
+  expect(compiled("accordion")).toMatch(/\.button\)? ?\{[^}]*color: var\(--current-active-color\)/);
 });
