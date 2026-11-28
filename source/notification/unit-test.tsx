@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 // @vitest-environment happy-dom
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
@@ -63,4 +65,13 @@ test("keeps at most four, newest last; without a provider, notifying does nothin
   expect(screen.getAllByRole("status")).toHaveLength(4);
   render(<Trigger />);
   fireEvent.click(screen.getAllByText("save")[1]!);
+});
+
+test("its own background is glass", () => {
+  const sheet = compile(join(process.cwd(), "source/notification/index.module.scss"), {
+    loadPaths: [join(process.cwd(), "source")],
+  }).css;
+  expect(sheet).toMatch(
+    /\.notification \{[^}]*background: [^;]+;[^}]*-webkit-backdrop-filter: blur\(var\(--glass-blur\)\);[^}]*backdrop-filter: blur\(var\(--glass-blur\)\)/,
+  );
 });

@@ -91,9 +91,9 @@ export interface BoxProperties extends BoxLook, Omit<HTMLAttributes<HTMLElement>
   /** An interactive box's state (`index` by default: it follows the pointer). */
   state?: BoxState;
   /**
-   * What the box adds to its look, any together: `glass` blurs what is behind a see-through box, `glow` lights it
-   * with a soft light that breathes, floats, moves toward the pointer and swells while pressed. Without a list,
-   * glass; an empty list, nothing.
+   * What the box adds to its look, any together: `glass` blurs what is behind the box's see-through background (an
+   * outlined or transparent box has one only while hovered or pressed), `glow` lights it with a soft light that
+   * breathes, floats, moves toward the pointer and swells while pressed. Without a list, glass; an empty list, nothing.
    */
   modifications?: readonly BoxModification[];
   /** Where a glow is drawn: `outside` (the default) a little past the box, behind it; `inside` within it. */

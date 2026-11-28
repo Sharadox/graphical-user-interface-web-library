@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test } from "vitest";
 import { Navigation } from "@sharadox/graphical-user-interface-web-library/navigation";
@@ -75,4 +77,11 @@ test("the bar spans the screen (its line from edge to edge); its content sits in
   const wrapper = bar.firstElementChild!;
   expect(wrapper.getAttribute("data-wrapper")).toBe("");
   expect(wrapper.contains(screen.getByRole("navigation", { name: "Main" }))).toBe(true);
+});
+
+test("the bar's line runs across the screen, so it has no corners", () => {
+  const sheet = compile(join(process.cwd(), "source/navigation/index.module.scss"), {
+    loadPaths: [join(process.cwd(), "source")],
+  }).css;
+  expect(sheet).toMatch(/\.bar \{[^}]*border-radius: 0/);
 });

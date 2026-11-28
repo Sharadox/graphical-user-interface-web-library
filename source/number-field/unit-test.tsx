@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import { NumberField } from "@sharadox/graphical-user-interface-web-library/number-field";
@@ -135,4 +137,13 @@ test("works with no one listening, and typing in a controlled field asks the own
   fireEvent.change(input, { target: { value: "8" } });
   expect(change).toHaveBeenLastCalledWith(8);
   expect(input.value).toBe("3");
+});
+
+test("its minus and plus fill their sections, so the field is exactly its size", () => {
+  const sheet = compile(join(process.cwd(), "source/number-field/index.module.scss"), {
+    loadPaths: [join(process.cwd(), "source")],
+  }).css;
+  expect(sheet).toMatch(
+    /\.button \{[^}]*min-block-size: var\(--section-minimum-size\);[^}]*min-inline-size: var\(--section-minimum-size\);[^}]*padding: 0;/,
+  );
 });

@@ -36,6 +36,9 @@
   --section-border-thickness: var(--box-border-thickness);
   --section-border-color: var(--box-border-color);
   --section-edge: calc(var(--box-edge-thickness) - var(--box-border-thickness));
+  // A line of text in a section fits inside the box's minimum size; and a box with sections pads inside them.
+  --section-line-limit: var(--box-line-limit);
+  --section-box-padding: var(--box-padding);
   // An inner glow's paint.
   --glow-paint: var(--box-glow-paint);
   // Its gradient ring is a pseudo-element, which the box's own (non-inheriting) values don't reach either.
@@ -67,10 +70,17 @@
   }
 }
 
-// Modifications: glass (the default) blurs what is behind a see-through box; a glowing box sits over its glow.
-:where(.box[data-modifications]:not([data-modifications~="glass"])) {
+// Modifications: glass (the default) blurs what is behind a box with a see-through background; a glowing box sits over
+// its glow. Without glass, nothing blurs, not even a component that glasses a background of its own (hence the weight).
+.box[data-modifications]:not([data-modifications~="glass"]) {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+// A box with sections (a prefix, a suffix, an interactive box's content) pads inside them, not around them, so the
+// lines between them run from one edge to the other.
+:where(.box:has(> [data-section])) {
+  padding: calc(var(--box-edge-thickness) - var(--box-border-thickness));
 }
 
 :where(.box[data-glow-boundary="outside"]) {
@@ -117,8 +127,11 @@
   opacity: var(--disabled-opacity);
 }
 
-// A field: typed into, so a text cursor and the field's weight; its focus ring circles the whole box.
+// A field: typed into, so a text cursor and the field's weight; its focus ring circles the whole box. Its text is
+// never clipped from a gradient: browsers draw such text where it starts, not where it has scrolled to as it's typed.
 :where(.box[data-field]) {
+  background-image: none, var(--box-background-image);
+  -webkit-text-fill-color: currentcolor;
   cursor: text;
   font-weight: var(--current-field-font-weight);
 
@@ -144,27 +157,32 @@
   justify-content: inherit;
   align-items: inherit;
   gap: inherit;
+  align-self: stretch;
   min-inline-size: 0;
-  padding-inline: var(--section-padding);
+  padding: var(--section-box-padding) calc(var(--section-padding) + var(--section-box-padding));
+  line-height: min(calc(var(--line-height) * 1em), var(--section-line-limit));
 }
 
 :where(.box) > :where([data-section="prefix"]) {
   border-inline-end: var(--section-border-thickness) var(--line-style) var(--section-border-color);
-  padding-inline-end: var(--section-edge);
+  padding-inline-end: calc(var(--section-box-padding) + var(--section-edge));
 }
 
 :where(.box) > :where([data-section="suffix"]) {
   border-inline-start: var(--section-border-thickness) var(--line-style) var(--section-border-color);
-  padding-inline-start: var(--section-edge);
+  padding-inline-start: calc(var(--section-box-padding) + var(--section-edge));
 }
 
 :where(.section) {
   display: flex;
   flex: none;
   justify-content: center;
-  align-items: center;
+  align-items: inherit;
+  align-self: stretch;
   min-block-size: var(--section-minimum-size);
   min-inline-size: var(--section-minimum-size);
+  padding: var(--section-box-padding);
+  line-height: min(calc(var(--line-height) * 1em), var(--section-line-limit));
 }
 
 :where(.box[data-square]) {

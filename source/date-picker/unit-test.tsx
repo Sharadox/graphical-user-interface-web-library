@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import { DatePicker, monthDays, parseDay, formatDay } from "@sharadox/graphical-user-interface-web-library/date-picker";
@@ -148,5 +150,14 @@ test("disabled alone shows as disabled", () => {
   render(<DatePicker label="Visit" disabled {...WORDS} />);
   expect(screen.getByRole("button", { name: /Visit/ }).closest("[data-field]")!.getAttribute("data-state")).toBe(
     "disabled",
+  );
+});
+
+test("its own background is glass", () => {
+  const sheet = compile(join(process.cwd(), "source/date-picker/index.module.scss"), {
+    loadPaths: [join(process.cwd(), "source")],
+  }).css;
+  expect(sheet).toMatch(
+    /\.calendar \{[^}]*background: [^;]+;[^}]*-webkit-backdrop-filter: blur\(var\(--glass-blur\)\);[^}]*backdrop-filter: blur\(var\(--glass-blur\)\)/,
   );
 });

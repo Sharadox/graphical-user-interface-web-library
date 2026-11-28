@@ -27,7 +27,14 @@
   foreground fill. `SkipLink`: the first link, to the main content, shown only to the keyboard.
 - Every component's default size is medium.
 - Gradient colors (`gradient: ["red", …]`, at every alpha) and `rainbow`: the six hues on fills, text, hover
-  backgrounds and outlined borders.
+  backgrounds, outlined borders and separators. A field's typed text is the flat color (browsers don't scroll text
+  clipped from a gradient).
+- Boxes are exactly their size (16, 32 or 48): a line of text fits inside the minimum size, and a number field's minus
+  and plus fill their sections.
+- Glass only where there is a background: an outlined or transparent box blurs what is behind it only while hovered
+  or pressed.
+- A box with sections pads inside them, so the lines between them run from edge to edge. The bar's line has no
+  corners.
 - Positions: every physical and logical place on a box, and a brand's own (`positions`).
 - Modifications (`modifications={["glass", "glow"]}`): glass, the default, and a glow that breathes, floats, rests at
   `glowPosition` (or follows the pointer at `cursor`), glides toward the pointer and swells while pressed, outside
