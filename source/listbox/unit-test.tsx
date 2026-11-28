@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { compile } from "sass";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import { Listbox } from "@sharadox/graphical-user-interface-web-library/listbox";
@@ -48,4 +50,13 @@ test("an empty list says so when told what to say", () => {
     />,
   );
   expect(screen.getByText("Nothing.")).toBeDefined();
+});
+
+test("its own background is glass", () => {
+  const sheet = compile(join(process.cwd(), "source/listbox/index.module.scss"), {
+    loadPaths: [join(process.cwd(), "source")],
+  }).css;
+  expect(sheet).toMatch(
+    /\.list \{[^}]*background: [^;]+;[^}]*-webkit-backdrop-filter: blur\(var\(--glass-blur\)\);[^}]*backdrop-filter: blur\(var\(--glass-blur\)\)/,
+  );
 });

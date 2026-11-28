@@ -204,7 +204,7 @@ test("the edge is a border on outlined boxes and padding on the others, around t
   expect(box).toMatch(/--section-minimum-size: calc\(var\(--box-minimum-size\) - 2 \* var\(--box-edge-thickness\)\)/);
   expect(box).toMatch(/--section-edge: calc\(var\(--box-edge-thickness\) - var\(--box-border-thickness\)\)/);
   expect(box).toMatch(
-    /\[data-section=prefix\]\)[^{]*\{[^}]*border-inline-end: var\(--section-border-thickness\) var\(--line-style\) var\(--section-border-color\);[^}]*padding-inline-end: var\(--section-edge\)/,
+    /\[data-section=prefix\]\)[^{]*\{[^}]*border-inline-end: var\(--section-border-thickness\) var\(--line-style\) var\(--section-border-color\);[^}]*padding-inline-end: calc\(var\(--section-box-padding\) \+ var\(--section-edge\)\)/,
   );
   expect(box).toMatch(/\[data-section=suffix\]\)[^{]*\{[^}]*border-inline-start: var\(--section-border-thickness\)/);
 });
@@ -230,4 +230,39 @@ test("the gradient ring reads values the box passes down (its own don't reach it
   expect(sheet).toMatch(/border: var\(--ring-thickness\) solid transparent/);
   expect(sheet).toMatch(/background: var\(--ring-paint\) border-box/);
   expect(sheet).toMatch(/\[data-state=loading\]\)[^{]*\{[^}]*background-image: none, var\(--box-background-image\)/);
+});
+
+test("a line of text fits inside the box's minimum size, so the box is exactly its size", () => {
+  const box = css();
+  expect(box).toMatch(/--section-line-limit: var\(--box-line-limit\)/);
+  expect(box).toMatch(
+    /\.content\)[^{]*\{[^}]*line-height: min\(var\(--line-height\) \* 1em, var\(--section-line-limit\)\)/,
+  );
+  expect(box).toMatch(
+    /\.section\)[^{]*\{[^}]*line-height: min\(var\(--line-height\) \* 1em, var\(--section-line-limit\)\)/,
+  );
+});
+
+test("a box with sections pads inside them, so the lines between them run from edge to edge", () => {
+  const box = css();
+  expect(box).toMatch(
+    /\.box:has\(> \[data-section\]\)\)[^{]*\{[^}]*padding: calc\(var\(--box-edge-thickness\) - var\(--box-border-thickness\)\)/,
+  );
+  expect(box).toMatch(/--section-box-padding: var\(--box-padding\)/);
+  expect(box).toMatch(
+    /\.content\)[^{]*\{[^}]*align-self: stretch;[^}]*padding: var\(--section-box-padding\) calc\(var\(--section-padding\) \+ var\(--section-box-padding\)\)/,
+  );
+  expect(box).toMatch(/\.section\)[^{]*\{[^}]*align-self: stretch;[^}]*padding: var\(--section-box-padding\)/);
+});
+
+test("a field's typed text is never clipped from a gradient (the browser draws it unscrolled): it is the flat color", () => {
+  expect(css()).toMatch(
+    /\.box\[data-field\]\)[^{]*\{[^}]*background-image: none, var\(--box-background-image\);[^}]*-webkit-text-fill-color: currentcolor/,
+  );
+});
+
+test("a box without glass in its modifications never blurs, even where a component glasses its own background", () => {
+  expect(css()).toMatch(
+    /\n\.box\[data-modifications\]:not\(\[data-modifications~=glass\]\) \{\s*-webkit-backdrop-filter: none;\s*backdrop-filter: none/,
+  );
 });

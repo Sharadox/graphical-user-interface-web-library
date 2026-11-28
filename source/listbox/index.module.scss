@@ -9,6 +9,8 @@
   overflow-y: auto;
   list-style: none;
   background: rgb(var(--background-color-rgb) / 85%);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
   scrollbar-width: thin;
   scrollbar-color: var(--foreground-border-color) transparent;
   overscroll-behavior: contain;

@@ -16,6 +16,8 @@
 .notification {
   inline-size: 100%;
   background: rgb(var(--background-color-rgb) / 85%);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
   pointer-events: auto;
   animation: enter var(--duration) var(--easing);
 }

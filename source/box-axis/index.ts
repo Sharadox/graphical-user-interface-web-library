@@ -19,6 +19,7 @@ export const BOX_INITIAL_VALUES: AxisDeclarations = {
   "box-section-padding": "0px",
   "box-border-thickness": "0px",
   "box-edge-thickness": "0px",
+  "box-line-limit": "10000px",
   "box-border-color": "transparent",
   "box-background": "transparent",
   "box-background-image": "none",
@@ -45,6 +46,8 @@ const SIZED: AxisDeclarations = {
   "box-section-padding": "var(--current-section-padding)",
   "box-minimum-size": "var(--current-minimum-size)",
   "box-edge-thickness": "var(--line-thickness)",
+  // A line of text fits inside the minimum size (less the edges), so the box is exactly 16, 32 or 48 pixels tall.
+  "box-line-limit": "calc(var(--current-minimum-size) - 2 * var(--line-thickness))",
 };
 /** Seen against the page: the page's focus ring, the color's glow, titles in the color's active color. */
 const SEE_THROUGH: AxisDeclarations = {
@@ -67,15 +70,21 @@ const UNBORDERED: AxisDeclarations = {
   "box-border-gradient-weight": "0%",
   "box-ring-display": "none",
 };
-/** A background in a transparent color, or its gradient (whose flat color then hides), and the state's text. */
+/**
+ * A background in a transparent color, or its gradient (whose flat color then hides), and the state's text; with a
+ * background now, it is glass.
+ */
 const tint = (state: "hover" | "active") => ({
   "box-background": `color-mix(in srgb, transparent var(--current-color-gradient-weight), var(--current-transparent-${state}-color))`,
   "box-background-image": `var(--current-transparent-${state}-color-gradient, none)`,
   "box-text-color": `var(--current-${state}-color)`,
+  "box-backdrop": GLASS,
 });
 /**
  * Outlined and transparent: the color's transparent background (or gradient) and its hover and active text while
  * hovered and pressed. Outlined's border is the color's border color, a gradient on whole lines; transparent has none.
+ * At rest their background is wholly transparent, so there is nothing to glass: nothing behind them shows through a
+ * blur until they have a background.
  */
 const tinted = (bordered: boolean) => ({
   rest: {
@@ -93,7 +102,7 @@ const tinted = (bordered: boolean) => ({
           "box-ring-display": "var(--current-color-gradient-display)",
         }
       : UNBORDERED),
-    "box-backdrop": GLASS,
+    "box-backdrop": "none",
   },
   hover: tint("hover"),
   active: tint("active"),
@@ -130,6 +139,7 @@ export const VARIANT_AXIS: Axis = {
         "box-minimum-size": "0px",
         "box-border-thickness": "0px",
         "box-edge-thickness": "0px",
+        "box-line-limit": "10000px",
         ...SEE_THROUGH,
         "box-background": "transparent",
         "box-background-image": "none",

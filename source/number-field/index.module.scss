@@ -22,8 +22,12 @@
   }
 }
 
-// The buttons fill their sections edge to edge, without corners of their own (a plain class, to beat the box's).
+// The buttons fill their sections edge to edge, without corners or edges of their own (a plain class, to beat the
+// box's), so the field is exactly its size.
 .button {
   align-self: stretch;
+  min-block-size: var(--section-minimum-size);
+  min-inline-size: var(--section-minimum-size);
+  padding: 0;
   border-radius: 0;
 }

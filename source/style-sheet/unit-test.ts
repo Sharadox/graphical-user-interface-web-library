@@ -280,7 +280,10 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       "--box-border-thickness:var(--line-thickness)",
       "--box-edge-thickness:var(--line-thickness)",
       "--box-border-color:var(--current-border-color)",
-      "--box-backdrop:blur(var(--glass-blur))",
+      // Nothing to glass while its background is wholly transparent: the blur comes with the hover background.
+      "--box-backdrop:none",
+      // A line of text fits inside the minimum size, so a box is exactly 16, 32 or 48 pixels tall.
+      "--box-line-limit:calc(var(--current-minimum-size) - 2 * var(--line-thickness))",
       "--box-focus-color:var(--focus-color)",
       "--box-glow-paint:var(--current-color-paint)",
       "--box-title-color:var(--current-active-color)",
@@ -300,6 +303,7 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       "--box-background-image:var(--current-transparent-hover-color-gradient, none)",
       "--box-text-color:var(--current-hover-color)",
       "--box-border-color:var(--current-border-color)",
+      "--box-backdrop:blur(var(--glass-blur))",
     ]),
   );
   // Only a box left to the pointer (state index) turns on hover; a set state stays as it is.
@@ -314,6 +318,7 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
     expect.arrayContaining([
       "--box-background-image:var(--current-transparent-active-color-gradient, none)",
       "--box-text-color:var(--current-active-color)",
+      "--box-backdrop:blur(var(--glass-blur))",
       "--box-border-thickness:0px",
       "--box-edge-thickness:var(--line-thickness)",
       "--box-border-paint:none",
@@ -326,6 +331,7 @@ test("each variant sets the box's values at rest, on hover and while pressed, fo
       "--box-border-thickness:0px",
       "--box-edge-thickness:0px",
       "--box-minimum-size:0px",
+      "--box-line-limit:10000px",
     ]),
   );
   expect(inBreakpoint(960, '[data-interactive][data-state="hover"][data-variant-960="filled"]{')).toBe(true);
@@ -371,6 +377,8 @@ test("a box's values stay on it: registered without inheritance, starting plain 
   expect(sheet).toContain('@property --box-text-fill{syntax:"*";inherits:false;initial-value:currentcolor}');
   expect(sheet).toContain('@property --box-ring-display{syntax:"*";inherits:false;initial-value:none}');
   expect(sheet).toContain('@property --box-edge-thickness{syntax:"*";inherits:false;initial-value:0px}');
+  // Without a minimum size, a line of text is as tall as it likes.
+  expect(sheet).toContain('@property --box-line-limit{syntax:"*";inherits:false;initial-value:10000px}');
   expect(sheet).toContain('@property --box-focus-color{syntax:"*";inherits:false;initial-value:currentcolor}');
   expect(sheet).not.toContain("--glow-angle");
   expect(sheet.indexOf("@property")).toBe(0);

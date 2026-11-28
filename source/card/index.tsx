@@ -6,7 +6,7 @@ import styles from "./index.module.scss";
 /**
  * A card: one thing on its own (a picture, a name, an identifier). Its title, description and content on one side,
  * its action buttons on the other, centered on the card's height; they wrap under it when there is no room. An
- * outlined index article (its title in the active color) by default (see-through, so glass), with every box look.
+ * outlined index article (its title in the active color) by default (glass once it has a background), with every box look.
  *
  * @example
  * <Card title="Email" description="Where sign-in codes go." action={<Button variant="outlined">Edit</Button>}>ana@example.com</Card>
