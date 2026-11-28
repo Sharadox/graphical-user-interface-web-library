@@ -12,12 +12,27 @@ import type {
 /** The parts of a color that a reference takes from the color it points to, unless it sets them itself. */
 const PARTS = ["transparent", "on", "hover"] as const;
 type Part = (typeof PARTS)[number];
+/** What a gradient gives a color, each taken whole by a reference without its own gradient. */
+const GRADIENT_VALUES = [
+  "color-gradient",
+  "transparent-color-gradient",
+  "transparent-hover-color-gradient",
+  "transparent-active-color-gradient",
+  "color-gradient-weight",
+  "color-gradient-display",
+  "text-fill",
+  "text-clip",
+] as const;
+/** The values of the fill a color turns on hover: its channels, its text's and its gradient. */
+const FILLED_HOVER_VALUES = ["filled-hover-color-rgb", "filled-hover-on-color-rgb", "filled-hover-color-gradient"];
 
 type Declarations = string[];
 const block = (selector: string, declarations: Declarations) => `${selector}{${declarations.join(";")}}`;
 const media = (query: string, rules: string[]) => `@media ${query}{${rules.join("")}}`;
 const attribute = (name: string, breakpoint?: number) => (breakpoint ? `${name}-${breakpoint}` : name);
 const select = (name: string, value: string, breakpoint?: number) => `[${attribute(name, breakpoint)}="${value}"]`;
+const take = (name: string, target: string, values: readonly string[]) =>
+  values.map((value) => `--${name}-${value}:var(--${target}-${value})`);
 
 /** The source of a color's part (`on`, `transparent`, `hover`) when the color itself names it. */
 function ownPart(name: string, color: ColorDefinition, part: Part): string | undefined {
@@ -28,38 +43,80 @@ function ownPart(name: string, color: ColorDefinition, part: Part): string | und
   return `--${name}-${part}-color-rgb:var(--${fallback}-color-rgb)`;
 }
 
+/**
+ * The fill a color turns on hover, when the color decides it: the one it names, or itself (a constant color, or a
+ * reference painted with its own gradient); a plain reference takes its color's.
+ */
+function ownFilledHover(name: string, color: ColorDefinition): Declarations {
+  const chosen = color.filledHover ?? (!isReference(color) || color.gradient ? name : undefined);
+  if (!chosen) return [];
+  return [
+    `--${name}-filled-hover-color-rgb:var(--${chosen}-color-rgb)`,
+    `--${name}-filled-hover-on-color-rgb:var(--${chosen}-on-color-rgb)`,
+    `--${name}-filled-hover-color-gradient:var(--${chosen}-color-gradient)`,
+  ];
+}
+
+/** A gradient through the colors at one of the color's alphas. */
+const gradient = (name: string, colors: readonly string[], alpha: string) =>
+  `linear-gradient(var(--${name}-gradient-angle), ${colors
+    .map((stop) => `rgb(var(--${stop}-color-rgb) / var(--${name}-${alpha}))`)
+    .join(", ")})`;
+
+/**
+ * A color's own gradient, at its alpha and each transparent alpha, and the flags the box reads (how much of the flat
+ * color to hide, whether to draw the gradient border, the text's fill); a flat constant color says it has none.
+ */
+function ownGradient(name: string, color: ColorDefinition): Declarations {
+  if (color.gradient) {
+    const colors = color.gradient;
+    return [
+      `--${name}-gradient-angle:var(--gradient-angle)`,
+      `--${name}-color-gradient:${gradient(name, colors, "color-rgb-alpha")}`,
+      `--${name}-transparent-color-gradient:${gradient(name, colors, "transparent-color-rgb-alpha")}`,
+      `--${name}-transparent-hover-color-gradient:${gradient(name, colors, "transparent-hover-color-rgb-alpha")}`,
+      `--${name}-transparent-active-color-gradient:${gradient(name, colors, "transparent-active-color-rgb-alpha")}`,
+      `--${name}-color-gradient-weight:100%`,
+      `--${name}-color-gradient-display:block`,
+      `--${name}-text-fill:transparent`,
+      `--${name}-text-clip:text`,
+    ];
+  }
+  if (isReference(color)) return [];
+  return [
+    `--${name}-color-gradient-weight:0%`,
+    `--${name}-color-gradient-display:none`,
+    `--${name}-text-fill:currentcolor`,
+    `--${name}-text-clip:border-box`,
+  ];
+}
+
 /** What a reference takes from the color it points to: its channels, its gradient and every part it doesn't set. */
 function referenceDeclarations(name: string, color: ColorDefinition, target: string): Declarations {
   return [
     `--${name}-color-rgb:var(--${target}-color-rgb)`,
-    `--${name}-color-gradient:var(--${target}-color-gradient)`,
+    ...(color.gradient ? [] : take(name, target, GRADIENT_VALUES)),
     ...PARTS.filter((part) => !color[part]).map(
       (part) => `--${name}-${part}-color-rgb:var(--${target}-${part}-color-rgb)`,
     ),
+    ...(color.filledHover || color.gradient ? [] : take(name, target, FILLED_HOVER_VALUES)),
   ];
 }
 
-/** A color style's sources: each constant color's channels and gradient, and the colors chosen per style. */
+/** A color style's sources: each constant color's channels, and the colors chosen per style. */
 function colorStyleDeclarations(configuration: InterfaceConfiguration, style: string): Declarations {
   const declarations = [`color-scheme:${configuration.colorStyles[style]!.scheme}`];
   for (const [name, color] of Object.entries(configuration.colors)) {
-    if (!isReference(color)) {
-      declarations.push(`--${name}-color-rgb:${color.rgb[style]}`);
-      if (color.gradient?.[style]) declarations.push(`--${name}-color-gradient:${color.gradient[style]}`);
-    } else if (typeof color.of !== "string") {
-      declarations.push(...referenceDeclarations(name, color, color.of[style]!));
-    }
+    if (!isReference(color)) declarations.push(`--${name}-color-rgb:${color.rgb[style]}`);
+    else if (typeof color.of !== "string") declarations.push(...referenceDeclarations(name, color, color.of[style]!));
   }
   return declarations;
 }
 
-/** Every value of a color, derived in each scope from its sources, so a style switched anywhere reaches them all. */
-function derivedDeclarations(name: string, color: ColorDefinition): Declarations {
+/** The formulas every color (and the color a component wears) derives from its channels, alphas and gradient. */
+function formulas(name: string): Declarations {
   const color_ = `--${name}`;
-  const fixedReference = isReference(color) && typeof color.of === "string" ? color.of : undefined;
   return [
-    ...(fixedReference ? referenceDeclarations(name, color, fixedReference) : []),
-    ...PARTS.map((part) => ownPart(name, color, part)).filter((declaration) => declaration !== undefined),
     `${color_}-color-rgb-alpha:var(--color-rgb-alpha)`,
     `${color_}-color:rgb(var(${color_}-color-rgb) / var(${color_}-color-rgb-alpha))`,
     `${color_}-transparent-color-rgb-alpha:var(--transparent-color-rgb-alpha)`,
@@ -71,29 +128,44 @@ function derivedDeclarations(name: string, color: ColorDefinition): Declarations
     `${color_}-border-color:var(${color_}-transparent-color)`,
     `${color_}-on-color:rgb(var(${color_}-on-color-rgb))`,
     `${color_}-hover-color:rgb(var(${color_}-hover-color-rgb) / var(${color_}-color-rgb-alpha))`,
+    `${color_}-filled-hover-color:rgb(var(${color_}-filled-hover-color-rgb) / var(${color_}-color-rgb-alpha))`,
+    `${color_}-filled-hover-on-color:rgb(var(${color_}-filled-hover-on-color-rgb))`,
     `${color_}-color-paint:var(${color_}-color-gradient, linear-gradient(var(${color_}-color), var(${color_}-color)))`,
   ];
 }
 
-/** The same values for the color a component wears (`--current-*`), derived on the component itself. */
-const CURRENT: Declarations = derivedDeclarations("current", { rgb: {} }).filter(
-  (declaration) => !/^--current-(on|transparent|hover)-color-rgb:/.test(declaration),
-);
+/** Every value of a color, derived in each scope from its sources, so a style switched anywhere reaches them all. */
+function derivedDeclarations(name: string, color: ColorDefinition): Declarations {
+  const fixedReference = isReference(color) && typeof color.of === "string" ? color.of : undefined;
+  return [
+    ...(fixedReference ? referenceDeclarations(name, color, fixedReference) : []),
+    ...PARTS.map((part) => ownPart(name, color, part)).filter((declaration) => declaration !== undefined),
+    ...ownFilledHover(name, color),
+    ...ownGradient(name, color),
+    ...formulas(name),
+  ];
+}
 
-/** Points a component's current values at one color. */
-const currentColor = (name: string): Declarations => [
-  `--current-color-rgb:var(--${name}-color-rgb)`,
-  `--current-color-gradient:var(--${name}-color-gradient)`,
-  ...PARTS.map((part) => `--current-${part}-color-rgb:var(--${name}-${part}-color-rgb)`),
-];
+/** The same formulas for the color a component wears (`--current-*`), derived on the component itself. */
+const CURRENT: Declarations = formulas("current");
+
+/** Points a component's current values at one color: its channels, parts, gradient and flags. */
+const currentColor = (name: string): Declarations =>
+  take("current", name, [
+    "color-rgb",
+    ...PARTS.map((part) => `${part}-color-rgb`),
+    ...FILLED_HOVER_VALUES,
+    ...GRADIENT_VALUES,
+  ]);
 
 const declare = (declarations: AxisDeclarations): Declarations =>
   Object.entries(declarations).map(([name, value]) => `--${name}:${value}`);
 
 /**
- * One axis's rules: each value at rest, then hovered and pressed on interactive boxes, whether the state is real or
- * forced (`data-state="hover"`). Hover and pressed repeat the rest values under theirs, so a breakpoint's value
- * replaces the base value's whole look.
+ * One axis's rules: each value at rest, then hovered and pressed on interactive boxes. Only a box left to the pointer
+ * (`data-state="none"`) turns when hovered or pressed; a set state stays: `hover` looks hovered, `active` and
+ * `loading` pressed, `enabled` and `disabled` at rest. Hover and pressed repeat the rest values under theirs, so a
+ * breakpoint's value replaces the base value's whole look.
  */
 function axisRules(axis: Axis, breakpoint?: number): string[] {
   const rules: string[] = [];
@@ -107,13 +179,9 @@ function axisRules(axis: Axis, breakpoint?: number): string[] {
     const active = declare({ ...value.rest, ...value.hover, ...value.active });
     if (!stateful) continue;
     rules.push(block(`[data-interactive][data-state="hover"]${selector}`, hover));
-    rules.push(media("(hover:hover)", [block(`[data-interactive][data-state="enabled"]:hover${selector}`, hover)]));
-    rules.push(
-      block(
-        `[data-interactive][data-state="active"]${selector},[data-interactive][data-state="enabled"]:active${selector}`,
-        active,
-      ),
-    );
+    rules.push(media("(hover:hover)", [block(`[data-interactive][data-state="none"]:hover${selector}`, hover)]));
+    const pressed = ['[data-state="active"]', '[data-state="loading"]', '[data-state="none"]:active'];
+    rules.push(block(pressed.map((state) => `[data-interactive]${state}${selector}`).join(","), active));
   }
   return rules;
 }
@@ -136,7 +204,12 @@ function attributeRules(configuration: InterfaceConfiguration, breakpoint?: numb
   for (const name of Object.keys(configuration.cornerStyles))
     rules.push(block(select("data-style-corner", name, breakpoint), [`--corner-radius:var(--${name}-corner-radius)`]));
   for (const name of Object.keys(configuration.lineStyles))
-    rules.push(block(select("data-style-line", name, breakpoint), [`--line-style:var(--${name}-line-style)`]));
+    rules.push(
+      block(select("data-style-line", name, breakpoint), [
+        `--line-style:var(--${name}-line-style)`,
+        `--line-solid:var(--${name}-line-solid)`,
+      ]),
+    );
   for (const [name, size] of Object.entries(configuration.sizes))
     rules.push(
       block(
@@ -170,12 +243,17 @@ export function interfaceStyleSheet(configuration: InterfaceConfiguration): stri
     ...breakpoints.map((breakpoint) => `--breakpoint-${breakpoint}:${breakpoint}px`),
     ...Object.entries(configuration.values).map(([name, value]) => `--${name}:${value}`),
     ...Object.entries(configuration.cornerStyles).map(([name, radius]) => `--${name}-corner-radius:${radius}`),
-    ...Object.entries(configuration.lineStyles).map(([name, style]) => `--${name}-line-style:${style}`),
+    ...Object.entries(configuration.lineStyles).flatMap(([name, style]) => [
+      `--${name}-line-style:${style}`,
+      // Whether the line is whole: a gradient border is drawn only on whole lines.
+      `--${name}-line-solid:${style === "solid" ? 1 : 0}`,
+    ]),
     ...Object.entries(configuration.sizes).flatMap(([name, size]) =>
       Object.entries(size).map(([key, value]) => `--${name}-${key}:${value}`),
     ),
     `--corner-radius:var(--${configuration.defaultCornerStyle}-corner-radius)`,
     `--line-style:var(--${configuration.defaultLineStyle}-line-style)`,
+    `--line-solid:var(--${configuration.defaultLineStyle}-line-solid)`,
     ...Object.keys(configuration.sizes[configuration.defaultSize]!).map(
       (key) => `--current-${key}:var(--${configuration.defaultSize}-${key})`,
     ),
@@ -188,6 +266,9 @@ export function interfaceStyleSheet(configuration: InterfaceConfiguration): stri
     ...Object.entries(BOX_INITIAL_VALUES).map(
       ([name, value]) => `@property --${name}{syntax:"*";inherits:false;initial-value:${value}}`,
     ),
+    // The glow's angle, registered so it turns smoothly toward the pointer. Its syntax "<angle>" is written with CSS
+    // escapes, so no HTML parser mistakes it for a tag.
+    '@property --glow-angle{syntax:"\\3c angle\\3e ";inherits:false;initial-value:90deg}',
     block(":root", root),
     block(`:root,${select("data-style-color", starting)}`, colorStyleDeclarations(configuration, starting)),
     ...attributeRules(configuration).filter((rule) => !rule.startsWith(`${select("data-style-color", starting)}{`)),

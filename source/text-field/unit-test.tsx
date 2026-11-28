@@ -14,7 +14,7 @@ test("an input named by its label, in an outlined middleground field box", () =>
   expect(input.getAttribute("placeholder")).toBe("Your name");
   expect(box(input).getAttribute("data-variant")).toBe("outlined");
   expect(box(input).getAttribute("data-color")).toBe("middleground");
-  expect(box(input).getAttribute("data-state")).toBe("enabled");
+  expect(box(input).getAttribute("data-state")).toBe("none");
   fireEvent.change(input, { target: { value: "Ana" } });
   expect(change).toHaveBeenCalledOnce();
 });

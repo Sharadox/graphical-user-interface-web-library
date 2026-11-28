@@ -5,7 +5,7 @@ afterEach(cleanup);
 import type { ButtonLinkProperties } from "@sharadox/graphical-user-interface-web-library/button/type";
 import { Button } from "@sharadox/graphical-user-interface-web-library/button";
 
-test("without href it is a button: filled, brand, medium, enabled", () => {
+test("without href it is a button: filled, brand, medium, left to the pointer (state none)", () => {
   const click = vi.fn();
   render(<Button onClick={click}>Save</Button>);
   const button = screen.getByRole("button", { name: "Save" });
@@ -13,7 +13,7 @@ test("without href it is a button: filled, brand, medium, enabled", () => {
   expect(button.getAttribute("type")).toBe("button");
   expect(button.getAttribute("data-variant")).toBe("filled");
   expect(button.getAttribute("data-color")).toBe("brand");
-  expect(button.getAttribute("data-state")).toBe("enabled");
+  expect(button.getAttribute("data-state")).toBe("none");
   expect(button.getAttribute("data-interactive")).toBe("");
   fireEvent.click(button);
   expect(click).toHaveBeenCalledOnce();
@@ -121,4 +121,25 @@ test("a forced disabled state looks disabled and refuses clicks, yet stays focus
   expect(button.getAttribute("aria-disabled")).toBe("true");
   fireEvent.click(button);
   expect(click).not.toHaveBeenCalled();
+});
+
+test("a set active state looks pressed and refuses clicks; a set enabled or hover state still works", () => {
+  const click = vi.fn();
+  const { rerender } = render(
+    <Button state="active" onClick={click}>
+      Current
+    </Button>,
+  );
+  const button = screen.getByRole("button", { name: "Current" });
+  fireEvent.click(button);
+  expect(click).not.toHaveBeenCalled();
+  for (const state of ["enabled", "hover"] as const) {
+    rerender(
+      <Button state={state} onClick={click}>
+        Current
+      </Button>,
+    );
+    fireEvent.click(button);
+  }
+  expect(click).toHaveBeenCalledTimes(2);
 });

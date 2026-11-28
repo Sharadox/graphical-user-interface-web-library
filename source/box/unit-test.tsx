@@ -79,11 +79,11 @@ test("a square box holds one icon or character, with no padding", () => {
   expect(box.firstElementChild!.getAttribute("data-section")).toBe("content");
 });
 
-test("an interactive box is enabled by default, and any state can be forced", () => {
+test("an interactive box is left to the pointer by default (state none), and any state can be set", () => {
   const { container, rerender } = render(<Box interactive>Go</Box>);
   const box = container.firstElementChild!;
   expect(box.getAttribute("data-interactive")).toBe("");
-  expect(box.getAttribute("data-state")).toBe("enabled");
+  expect(box.getAttribute("data-state")).toBe("none");
   expect(box.firstElementChild!.getAttribute("data-section")).toBe("content");
   rerender(
     <Box interactive state="hover">
@@ -121,6 +121,50 @@ test("a field box holds a form control: marked, interactive, and its sections ap
   const box = container.firstElementChild!;
   expect(box.getAttribute("data-field")).toBe("");
   expect(box.getAttribute("data-interactive")).toBe("");
-  expect(box.getAttribute("data-state")).toBe("enabled");
+  expect(box.getAttribute("data-state")).toBe("none");
   expect([...box.children].map((section) => section.getAttribute("data-section"))).toEqual(["prefix", "content"]);
+});
+
+test("modifications are listed on the box: none set keeps the default (glass), an empty list takes it away", () => {
+  const { container, rerender } = render(<Box variant="outlined">Glass</Box>);
+  expect(container.firstElementChild!.hasAttribute("data-modifications")).toBe(false);
+  rerender(
+    <Box variant="outlined" modifications={[]}>
+      Plain
+    </Box>,
+  );
+  expect(container.firstElementChild!.getAttribute("data-modifications")).toBe("");
+  rerender(
+    <Box variant="outlined" modifications={["glass", "glow"]}>
+      Both
+    </Box>,
+  );
+  expect(container.firstElementChild!.getAttribute("data-modifications")).toBe("glass glow");
+});
+
+test("a glow is a layer right after the box, wearing the box's color, color style and start", () => {
+  const { container } = render(
+    <Box
+      variant="filled"
+      color="red"
+      colorStyle="black"
+      glowStart={{ base: "top", 960: "end" }}
+      modifications={["glow"]}
+    >
+      Glowing
+    </Box>,
+  );
+  const [box, glow] = [...container.children];
+  expect(box!.getAttribute("data-glow-start")).toBe("top");
+  expect(glow!.getAttribute("data-glow")).toBe("");
+  expect(glow!.getAttribute("aria-hidden")).toBe("true");
+  expect(
+    Object.fromEntries([...glow!.attributes].filter((a) => a.name.startsWith("data-")).map((a) => [a.name, a.value])),
+  ).toEqual({
+    "data-glow": "",
+    "data-color": "red",
+    "data-style-color": "black",
+    "data-glow-start": "top",
+    "data-glow-start-960": "end",
+  });
 });

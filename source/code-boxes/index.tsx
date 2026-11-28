@@ -78,7 +78,7 @@ export function CodeBoxes({
           variant="outlined"
           color={invalid ? "error" : "middleground"}
           size="large"
-          state={disabled ? "disabled" : "enabled"}
+          state={disabled ? "disabled" : "none"}
           className={styles.cell}
         >
           <input

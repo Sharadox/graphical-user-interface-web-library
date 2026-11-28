@@ -190,7 +190,7 @@ export function DatePicker(properties: DatePickerProperties) {
             field
             variant={variant}
             color={color ?? (error === undefined ? "middleground" : "error")}
-            state={state ?? (disabled ? "disabled" : "enabled")}
+            state={state ?? (disabled ? "disabled" : "none")}
             suffix={<Icon name="calendar" />}
             {...look}
             className={styles.field}

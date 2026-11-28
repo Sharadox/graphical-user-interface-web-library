@@ -66,7 +66,7 @@ export function Switch(properties: SwitchProperties) {
         color={color}
         corner={corner}
         size={size}
-        state={state ?? (disabled ? "disabled" : "enabled")}
+        state={state ?? (disabled ? "disabled" : "none")}
         {...look}
         className={styles.track}
       >

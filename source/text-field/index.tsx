@@ -47,7 +47,7 @@ export function TextField(properties: TextFieldProperties) {
           corner={corner}
           line={line}
           size={size}
-          state={state ?? (disabled ? "disabled" : "enabled")}
+          state={state ?? (disabled ? "disabled" : "none")}
           prefix={prefix}
           suffix={suffix}
           className={classNames(styles.field, multiline && styles.multiline, className)}

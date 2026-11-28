@@ -15,7 +15,14 @@ export const BOX_INITIAL_VALUES: AxisDeclarations = {
   "box-border-thickness": "0px",
   "box-border-color": "transparent",
   "box-background": "transparent",
+  "box-background-image": "none",
   "box-text-color": "currentcolor",
+  "box-text-paint": "none",
+  "box-text-fill": "currentcolor",
+  "box-text-clip": "border-box",
+  "box-border-paint": "none",
+  "box-border-gradient-weight": "0%",
+  "box-ring-display": "none",
   "box-backdrop": "none",
 };
 
@@ -27,20 +34,48 @@ const SIZED: AxisDeclarations = {
   "box-border-thickness": "var(--line-thickness)",
 };
 const GLASS = "blur(var(--glass-blur))";
-/** Outlined and transparent: the color's transparent background while hovered and pressed; middleground's text turns. */
-const tinted = (border: string) => ({
+/** Text in the color, painted with its gradient where it has one. */
+const PAINTED_TEXT: AxisDeclarations = {
+  "box-text-color": "var(--current-color)",
+  "box-text-paint": "var(--current-color-gradient, none)",
+  "box-text-fill": "var(--current-text-fill)",
+  "box-text-clip": "var(--current-text-clip)",
+};
+/** No border, no gradient border. */
+const UNBORDERED: AxisDeclarations = {
+  "box-border-color": "transparent",
+  "box-border-paint": "none",
+  "box-border-gradient-weight": "0%",
+  "box-ring-display": "none",
+};
+/** A background in a transparent color, or its gradient (whose flat color then hides). */
+const tint = (state: "hover" | "active") => ({
+  "box-background": `color-mix(in srgb, transparent var(--current-color-gradient-weight), var(--current-transparent-${state}-color))`,
+  "box-background-image": `var(--current-transparent-${state}-color-gradient, none)`,
+  "box-text-color": "var(--current-hover-color)",
+});
+/**
+ * Outlined and transparent: the color's transparent background (or gradient) while hovered and pressed;
+ * middleground's text turns. Outlined's border is the color's transparent one, a gradient on whole lines.
+ */
+const tinted = (bordered: boolean) => ({
   rest: {
     ...SIZED,
     "box-background": "transparent",
-    "box-text-color": "var(--current-color)",
-    "box-border-color": border,
+    "box-background-image": "none",
+    ...PAINTED_TEXT,
+    ...(bordered
+      ? {
+          "box-border-color": "var(--current-border-color)",
+          "box-border-paint": "var(--current-transparent-color-gradient, none)",
+          "box-border-gradient-weight": "var(--current-color-gradient-weight)",
+          "box-ring-display": "var(--current-color-gradient-display)",
+        }
+      : UNBORDERED),
     "box-backdrop": GLASS,
   },
-  hover: { "box-background": "var(--current-transparent-hover-color)", "box-text-color": "var(--current-hover-color)" },
-  active: {
-    "box-background": "var(--current-transparent-active-color)",
-    "box-text-color": "var(--current-hover-color)",
-  },
+  hover: tint("hover"),
+  active: tint("active"),
 });
 
 /** The variants: filled, outlined, transparent and inline (a box that sits in running text, like a link). */
@@ -50,14 +85,24 @@ export const VARIANT_AXIS: Axis = {
     filled: {
       rest: {
         ...SIZED,
-        "box-background": "var(--current-color-paint)",
+        "box-background": "var(--current-color)",
+        "box-background-image": "var(--current-color-gradient, none)",
         "box-text-color": "var(--current-on-color)",
-        "box-border-color": "transparent",
+        "box-text-paint": "none",
+        "box-text-fill": "currentcolor",
+        "box-text-clip": "border-box",
+        ...UNBORDERED,
         "box-backdrop": "none",
       },
+      // Unchanged, unless the color turns another on hover (middleground turns foreground).
+      hover: {
+        "box-background": "var(--current-filled-hover-color)",
+        "box-background-image": "var(--current-filled-hover-color-gradient, none)",
+        "box-text-color": "var(--current-filled-hover-on-color)",
+      },
     },
-    outlined: tinted("var(--current-border-color)"),
-    transparent: tinted("transparent"),
+    outlined: tinted(true),
+    transparent: tinted(false),
     inline: {
       rest: {
         "box-display": "inline-flex",
@@ -65,8 +110,9 @@ export const VARIANT_AXIS: Axis = {
         "box-minimum-size": "0px",
         "box-border-thickness": "0px",
         "box-background": "transparent",
-        "box-text-color": "var(--current-color)",
-        "box-border-color": "transparent",
+        "box-background-image": "none",
+        ...PAINTED_TEXT,
+        ...UNBORDERED,
         "box-backdrop": "none",
       },
       hover: { "box-text-color": "var(--current-hover-color)" },
@@ -110,9 +156,17 @@ export const WRAP_AXIS = simple("data-wrap", "box-wrap", same("wrap", "nowrap"))
 const spaced = (attribute: string, property: string, scale: readonly number[]) =>
   simple(attribute, property, Object.fromEntries(scale.map((step) => [String(step), `var(--scale-${step})`])));
 
+/** Where a glow rests until the pointer comes near: below by default, or at any side. */
+export const GLOW_START_AXIS = simple("data-glow-start", "glow-start-angle", {
+  top: "-90deg",
+  end: "0deg",
+  bottom: "90deg",
+  start: "180deg",
+});
+
 /**
  * Every axis of a box, in the order their rules are written: variant, direction, justify, align, text align, and the
- * gap and padding from the scale.
+ * gap and padding from the scale, and where a glow starts.
  *
  * @example
  * boxAxes(DEFAULT_INTERFACE.scale).map((axis) => axis.attribute); // ["data-variant", "data-direction", …]
@@ -127,5 +181,6 @@ export function boxAxes(scale: readonly number[]): Axis[] {
     WRAP_AXIS,
     spaced("data-gap", "box-gap", scale),
     spaced("data-padding", "box-padding", scale),
+    GLOW_START_AXIS,
   ];
 }

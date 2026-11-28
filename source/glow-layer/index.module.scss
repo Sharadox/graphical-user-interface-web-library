@@ -1,0 +1,31 @@
+// A light around its box, under it: painted before the box (lower in the stack), so the box's fill covers its middle
+// and a see-through box shows it. Its brightest point sits on the box's edge at --glow-angle, which JavaScript turns
+// toward the pointer and a transition smooths.
+.glow {
+  --glow-angle: var(--glow-start-angle);
+  position: absolute;
+  top: calc(anchor(top) - var(--glow-spread));
+  right: calc(anchor(right) - var(--glow-spread));
+  bottom: calc(anchor(bottom) - var(--glow-spread));
+  left: calc(anchor(left) - var(--glow-spread));
+  z-index: 0;
+  pointer-events: none;
+  background: var(--current-color-paint);
+  opacity: var(--glow-opacity);
+  mask: radial-gradient(
+    circle var(--glow-radius) at calc(50% + cos(var(--glow-angle)) * (50% - var(--glow-spread)))
+      calc(50% + sin(var(--glow-angle)) * (50% - var(--glow-spread))),
+    #000,
+    transparent
+  );
+  transition: --glow-angle var(--duration) var(--easing);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  // Without anchor positioning it couldn't follow its box: no glow.
+  @supports not (anchor-name: --glow) {
+    display: none;
+  }
+}
